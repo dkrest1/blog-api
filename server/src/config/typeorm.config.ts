@@ -15,7 +15,8 @@ export default class typeOrmConfig {
       database: configService.get('DB_NAME'),
       entities: [__dirname + '/../**/*.entity.{js,ts}'],
       synchronize: true,
-      logging: false,
+      autoLoadEntities: true,
+      logging: true,
     };
   }
 }
