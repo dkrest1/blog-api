@@ -10,6 +10,4 @@ This is a blog Post Website that I created while experimenting with NestJS, I al
 
 ## Installation
 
-    ```
-        $ npm install
-    ```
+    $npm install
