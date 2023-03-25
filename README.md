@@ -8,6 +8,20 @@ This is a blog Post Website that I created while experimenting with NestJS, I al
 - TypeORM: the ORM which is used to connect the database.
 - SwaggerJS: for the API documentation.
 
+## Getting Started
+
+- clone the from
+
+```
+$ git clone url
+$ cd server
+$ npm install
+```
+
 ## Installation
 
     $npm install
+
+```
+
+```
