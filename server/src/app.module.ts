@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { ServiceModule } from './service/service.module';
-import { SearchModule } from './search/search.module';
-import { AuthModule } from './auth/auth.module';
-import { PostModule } from './post/post.module';
-import { dbConfig } from './config';
-import { UserEntity } from './user/entities/user.entity';
+import { UserModule } from './modules/user/user.module';
+import { SearchModule } from './modules/search/search.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { PostModule } from './modules/post/post.module';
+import { dbConfig, jwtConfig } from './config';
+import { Users } from './modules/user/entities/user.entity';
+import { Posts } from './modules/post/entities/post.entity';
+import { PaginateModule } from './modules/paginate/paginate.module';
+import { CommentModule } from './modules/comment/comment.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [dbConfig] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [dbConfig, jwtConfig] }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -25,19 +26,19 @@ import { UserEntity } from './user/entities/user.entity';
           username: configService.get<string>('database.username'),
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.db'),
-          entities: [UserEntity],
+          entities: [Users, Posts],
           synchronize: true,
           logging: false,
         };
       },
     }),
     UserModule,
-    ServiceModule,
     SearchModule,
     AuthModule,
     PostModule,
+    PaginateModule,
+    CommentModule,
+    CategoriesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
