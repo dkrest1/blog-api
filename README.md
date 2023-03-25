@@ -10,18 +10,13 @@ This is a blog Post Website that I created while experimenting with NestJS, I al
 
 ## Getting Started
 
-- clone the from
-
 ```
-$ git clone url
+$ git clone https://github.com/dkrest1/My-Blog.git
 $ cd server
-$ npm install
 ```
 
 ## Installation
 
-    $npm install
-
 ```
-
+$npm install
 ```
