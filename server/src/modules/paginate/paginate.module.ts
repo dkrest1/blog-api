@@ -4,6 +4,6 @@ import { PaginateController } from './paginate.controller';
 
 @Module({
   controllers: [PaginateController],
-  providers: [PaginateService]
+  providers: [PaginateService],
 })
 export class PaginateModule {}

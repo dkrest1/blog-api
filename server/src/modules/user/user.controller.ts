@@ -14,7 +14,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Users } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { UpdateResult, DeleteResult } from 'typeorm';
 
 @Controller('user')
@@ -24,7 +24,7 @@ export class UserController {
   @Post('create')
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
-  ): Promise<Users> {
+  ): Promise<User> {
     // check if email exist
     const emailExist = await this.userService.findByEmail(createUserDto.email);
     if (emailExist) {

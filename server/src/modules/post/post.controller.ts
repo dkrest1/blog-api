@@ -11,7 +11,7 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Posts } from './entities/post.entity';
+import { Post as Posts } from './entities/post.entity';
 
 @Controller('post')
 export class PostController {
@@ -22,26 +22,26 @@ export class PostController {
     @Body(new ValidationPipe()) createPostDto: CreatePostDto,
   ): Promise<Posts | any> {
     // check if slug exist
-    return await 'hello';
+    return;
   }
 
   @Get()
   findAll() {
-    return this.postService.findAll();
+    // return this.postService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
+    // return this.postService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+    // return this.postService.update(+id, updatePostDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.postService.remove(+id);
+    // return this.postService.remove(+id);
   }
 }

@@ -6,11 +6,13 @@ import { SearchModule } from './modules/search/search.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PostModule } from './modules/post/post.module';
 import { dbConfig, jwtConfig } from './config';
-import { Users } from './modules/user/entities/user.entity';
-import { Posts } from './modules/post/entities/post.entity';
+import { User } from './modules/user/entities/user.entity';
+import { Post } from './modules/post/entities/post.entity';
+import { Category } from './modules/category/entities/category.entity';
+import { Comment } from './modules/comment/entities/comment.entity';
 import { PaginateModule } from './modules/paginate/paginate.module';
 import { CommentModule } from './modules/comment/comment.module';
-import { CategoriesModule } from './modules/categories/categories.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
@@ -26,9 +28,9 @@ import { CategoriesModule } from './modules/categories/categories.module';
           username: configService.get<string>('database.username'),
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.db'),
-          entities: [Users, Posts],
+          entities: [User, Post, Comment, Category],
           synchronize: true,
-          logging: false,
+          logging: true,
         };
       },
     }),
@@ -38,7 +40,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     PostModule,
     PaginateModule,
     CommentModule,
-    CategoriesModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}
