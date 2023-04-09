@@ -26,9 +26,7 @@ export class User {
   firstname: string;
   @Column()
   lastname: string;
-  @Column({
-    select: false,
-  })
+  @Column()
   password: string;
   @Column({ type: 'enum', enum: UserRole, default: UserRole.SUBSCRIBER })
   role: UserRole;

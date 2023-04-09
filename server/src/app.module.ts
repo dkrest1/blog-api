@@ -30,7 +30,7 @@ import { CategoryModule } from './modules/category/category.module';
           database: configService.get<string>('database.db'),
           entities: [User, Post, Comment, Category],
           synchronize: true,
-          logging: true,
+          logging: false,
         };
       },
     }),

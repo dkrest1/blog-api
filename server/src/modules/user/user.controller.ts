@@ -22,9 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('create')
-  async create(
-    @Body(new ValidationPipe()) createUserDto: CreateUserDto,
-  ): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // check if email exist
     const emailExist = await this.userService.findByEmail(createUserDto.email);
     if (emailExist) {
