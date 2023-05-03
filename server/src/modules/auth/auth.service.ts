@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
+import { User } from '../user/entities/user.entity';
+import { comparePassword } from '../common/utils.';
 
 @Injectable()
 export class AuthService {
@@ -9,14 +11,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      throw new BadRequestException('User does not exist!');
+      throw new BadRequestException('Invalid Credentials');
     }
     // compare password to hashed passwords
-    if (user && (await user.comparePassword(password))) {
+    if (user && (await comparePassword(password, user.password))) {
       // delete password before returning user
       delete user.password;
       return user;
@@ -24,10 +26,10 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(user: User): Promise<{ access_token: string }> {
     const payload = { sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 }
