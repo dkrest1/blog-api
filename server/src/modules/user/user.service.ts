@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
+import { hashPassword } from '../common/utils.';
 
 @Injectable()
 export class UserService {
@@ -13,34 +14,56 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.userRepository.save(
-      this.userRepository.create(createUserDto),
+    // hashed password before save up
+    const hashedPassword = await hashPassword(createUserDto.password);
+    const user = { ...createUserDto, password: hashedPassword };
+    const createdUser = await this.userRepository.save(
+      this.userRepository.create(user),
     );
-
-    delete user.password;
-    return user;
+    delete createdUser.password;
+    return createdUser;
   }
 
   async update(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return await this.userRepository.update(id, updateUserDto);
+  ): Promise<UpdateUserDto> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    const hashedPassword = await hashPassword(updateUserDto.password);
+    const userToUpdate = {
+      ...user,
+      ...updateUserDto,
+      password: hashedPassword,
+    };
+
+    const updatedUser = await this.userRepository.save(userToUpdate);
+    delete updatedUser.password;
+    return updatedUser;
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.userRepository.delete(id);
-  }
-
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return await this.userRepository.findOneBy({
       id,
     });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({
-      where: { email },
+    return await this.userRepository.findOneBy({
+      email,
     });
+  }
+
+  async remove(id: string): Promise<string> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+    await this.userRepository.delete(id);
+
+    return `We are sorry to let you go ${user.firstname.toUpperCase()} ${user.lastname.toUpperCase()}`;
   }
 }
