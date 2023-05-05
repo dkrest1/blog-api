@@ -41,7 +41,7 @@ export default function Dashboard() {
                   to="/billing"
                   className="block text-gray-700 font-semibold hover:text-purple-500 px-2 py-1 md:px-4 md:py-2"
                 >
-                  Billing
+                  Account
                 </Link>
               </li>
               <li className="mt-3 md:mt-0 md:mr-4">
