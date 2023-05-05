@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import logo from '../Assets/Images/logo.png'
 // import code from '../Assets/Images/code.png'
 import {NavLink, Link} from 'react-router-dom'
-// import classNames from 'classNames'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
  const Navbar =()=> {
 
     const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +25,7 @@ import {NavLink, Link} from 'react-router-dom'
                             onClick={toggleMenu}
                             >
                             {/* <span className="sr-only">Open main menu</span> */}
-                            {isOpen ? <i className='fa fa-times'></i> : <i className='fa fa-bars'></i>}
+                            {isOpen ? <FontAwesomeIcon icon={faTimes}/> : <FontAwesomeIcon icon={faBars}/>}
                         </button>
                     </div>
                     <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-between">
