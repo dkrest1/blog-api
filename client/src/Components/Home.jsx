@@ -20,8 +20,8 @@ const Home =()=> {
                     <Link to='/login'><button className='bg-slate-300 text-gray-800 hover:ring-2 hover:ring-slate-300 font-semibold hover:bg-slate-700 hover:text-slate-200 rounded-md px-5 py-1 md:text-lg md:px-10 '
                     >Login</button></Link>
                 </div>
+                <p className='text-white'>dsjsifsfjssofsfsof</p>
             </div>
-            
         </section>
     </div>
   )
