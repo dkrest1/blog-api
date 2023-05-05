@@ -1,12 +1,30 @@
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import Navbar from "./Components/Navbar";
+import { Login } from './Components/Login';
+import Home from './Components/Home';
+import SignUpForm from './Components/SignUp';
+import Dashboard from './Components/Dashboard';
+import Footer from './Components/Footer';
+
 
 function App() {
 
   return (
-    <div className=' bg-slate-600 text-2xl min-h-full'>
-      Hello
-      <div className=' h-60 bg-red-600'>HEYYYYY</div>
+    <div className="App flex flex-col min-h-screen">
+      <BrowserRouter>
+        <Navbar/>
+        
+        <Routes>
+          <Route exact path="/" element={<Home/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/sign-up' element={<SignUpForm/>}/>
+          <Route path='/dashboard' element={<Dashboard/>}/>
+          
+        </Routes>
+        <Footer/>
+      </BrowserRouter>
     </div>
-  )
+  );
 }
 
 export default App;
