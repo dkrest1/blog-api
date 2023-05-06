@@ -1,6 +1,6 @@
 # Blog Website With TypeScript, NestJS, PostgreSQL, TypeORM, and SwaggerJS
 
-This is a blog Post Website that I created while experimenting with NestJS and React, I also used some technology along side with it, which are:
+This is a blog Post Website Application created with with NodeJS and React, also used some technologies along side with it, which are:
 
 - Typescript: for type checking in javascript
 - NestJS: a nodejs framework which was built on top express a nodejs light weight framework.
@@ -19,8 +19,18 @@ $ git clone https://github.com/dkrest1/My-Blog.git
 $ cd server
 ```
 
+## Create a `.env`file and put in the right credentials
+
+```
+$ cp .env.sample .env
+```
+
 ## Installation
 
 ```
-$npm install
+$ npm install
 ```
+
+### View APIs
+
+- http://localhost:3000/api#/

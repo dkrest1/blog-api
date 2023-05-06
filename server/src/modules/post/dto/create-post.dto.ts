@@ -1,19 +1,26 @@
-import { IsNotEmpty, IsString, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 export class CreatePostDto {
-  readonly id: number;
+  @ApiProperty()
+  readonly id: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   slug: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   title: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   content: string;
 
-  @IsDate()
-  publish_date: Date;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  published: boolean;
 }
