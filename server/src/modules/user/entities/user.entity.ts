@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { UserRole } from 'src/modules/common/enum/role.enum';
 import { Comment } from 'src/modules/comment/entities/comment.entity';
