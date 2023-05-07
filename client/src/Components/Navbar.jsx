@@ -4,7 +4,12 @@ import logo from '../Assets/Images/logo.png'
 import {NavLink, Link} from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
- const Navbar =()=> {
+import { faBell } from '@fortawesome/free-solid-svg-icons'
+import { useSelector, useDispatch } from 'react-redux'
+
+ const Navbar =({})=> {
+    const user = useSelector((state)=>state.user.user)
+    
 
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -48,41 +53,28 @@ import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
                                 >
                                 Home
                                 </NavLink>
-                                <NavLink to ="/dashboard"
-                                className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
-                                Dashboard
-                                </NavLink>
                                 <NavLink to ="/login"
                                 className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
                                 Login
                                 </NavLink>
-                                <NavLink to ="sign-up"
-                                 className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
-                                Sign Up
+                                <NavLink to ="/sign-up"
+                                className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
+                                Sign up
                                 </NavLink>
                             </div>
                         </div>
                     </div>
-                    {/* Button for notifications */}
+                {/* Button for notifications */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6   sm:pr-0">
-                        <NavLink to='/dashboard'>
+                        {/* <NavLink to='/dashboard'>
                             <button
                                 type="button"
                                 className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mr-2"
                                 >
-                                {/* <span className="sr-only">View notifications</span> */}
-                                <i className='fa fa-user'></i>
+                        
+                                <FontAwesomeIcon icon={faBell} className=' text-[19px]'/><span className=' text-[8px] text-slate-50 bg-red-700 rounded-full px-[3px] absolute left-2 top-6'>2</span>
                             </button>
-                        </NavLink>
-                        <NavLink to='#'>
-                            <button
-                                type="button"
-                                className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                                >
-                                <span className="sr-only">View notifications</span>
-                                <i className='fa fa-bell'></i>
-                            </button>
-                        </NavLink>
+                        </NavLink> */}
                         
                         
                     </div>
@@ -97,18 +89,22 @@ import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
                             className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Home
                         </Link>
-                        <Link to="#"
+                        {user && (
+                        <Link to="/dashboard"
                             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Dashboard
                         </Link>
+                         )} 
+                        {!user &&(<>
                         <Link to="#"
                             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
-                            Topics
+                            Login
                         </Link>
                         <Link to="#"
                             className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
-                            Account
+                            Sign up
                         </Link>
+                        </>)}
                     </div>
                 </nav>
                 )}

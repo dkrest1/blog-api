@@ -1,69 +1,77 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Login } from "./Login";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import Posts from "./Posts";
 
 export default function Dashboard() {
+  const user = useSelector((state)=>state.user.user)
+
+  const handleSearchSubmit = (event)=>{
+    event.preventDefault()
+  }
+  const handleProfileClick=()=>{
+    return
+  }
   return (
+    
     <div className="bg-gray-200 min-h-screen">
+      {user ? <>
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-6 py-3 md:flex md:justify-between md:items-center">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="text-xl font-semibold text-gray-700">
-              {/* <img src={logo} className="h-8" alt="Logo" /> */}
-              Dashboard
-            </Link>
-            <button
-              className="md:hidden rounded-lg focus:outline-none focus:shadow-outline-purple"
-              aria-label="Toggle menu"
-            >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6">
-                <path
-                  fillRule="evenodd"
-                  d="M2.5 4.75A.75.75 0 013.25 4h13.5a.75.75 0 010 1.5H3.25a.75.75 0 01-.75-.75zM3.25 9h13.5a.75.75 0 010 1.5H3.25a.75.75 0 110-1.5zM.75 13.25A.75.75 0 011.5 13h17a.75.75 0 010 1.5h-17a.75.75 0 01-.75-.75z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <nav className="hidden md:flex md:flex-grow">
-            <ul className="flex flex-col md:flex-row md:ml-auto">
-              <li className="mt-3 md:mt-0 md:mr-4">
-                <Link
-                  to="/account"
-                  className="block text-gray-700 font-semibold hover:text-purple-500 px-2 py-1 md:px-4 md:py-2"
-                >
-                  Profile
-                </Link>
-              </li>
-              <li className="mt-3 md:mt-0 md:mr-4">
-                <Link
-                  to="/billing"
-                  className="block text-gray-700 font-semibold hover:text-purple-500 px-2 py-1 md:px-4 md:py-2"
-                >
-                  Account
-                </Link>
-              </li>
-              <li className="mt-3 md:mt-0 md:mr-4">
-                <Link
-                  to="/settings"
-                  className="block text-gray-700 font-semibold hover:text-purple-500 px-2 py-1 md:px-4 md:py-2"
-                >
-                  Settings
-                </Link>
-              </li>
-            </ul>
+        <nav className="bg-gray-800">
+            <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div className="relative flex items-center justify-between h-16">
+                    <div className="flex-1 flex items-center justify-between sm:items-stretch sm:justify-between">
+                        <div className="flex-shrink-0 flex items-center">
+                            <Link to='/' className='' >
+                                <span className=' text-slate-200 text-xs md:text-2xl md:font-bold'>&lt;/&gt;</span>
+                                <span className='text-xs text-slate-200 md:text-lg md:font-semibold'>My Tech Blog</span>
+                            </Link>
+                        </div>
+                        <div className=" flex flex-row justify-between px-3 gap-4">
+                          <div className="">
+                            <NavLink to='#' className='text-slate-200 text-sm'>
+                              Posts 
+                            </NavLink>
+                          </div>
+                          <div>
+                            <form onSubmit={handleSearchSubmit}>
+                              <input 
+                              className=' w-[90px] h-5 text-xs p-1'
+                              type='search' 
+                              id='search'
+                              placeholder="search here..."
+                              />
+                              <button type="submit">
+                                <FontAwesomeIcon icon={faSearch} className='text-base absolute top-6 right-9' />
+                              </button>
+                            </form>
+                          </div>
+                          <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            <button
+                                type="button"
+                                onClick={handleProfileClick}
+                                className="bg-gray-800  rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white -mr-5"
+                                >
+                                <FontAwesomeIcon icon={faUserCircle} className=' text-xl'/>
+                            </button>
+                          </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
           </nav>
-        </div>
-      </header>
-
       {/* Main content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-semibold text-gray-700 mb-2">Account Dashboard</h1>
-        <div className="bg-white shadow-md rounded-lg px-4 py-4">
-          <p className="text-gray-700">Welcome to your account dashboard!</p>
+      <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
+        <div className="bg-white shadow-md rounded-lg px-4 py-3">
+          <p className="text-gray-700">Latest Posts</p>
         </div>
+        <Posts/>
       </main>
-
+      </> : <Login/>}
     </div>
+    
   )}
