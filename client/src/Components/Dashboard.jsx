@@ -6,6 +6,7 @@ import { Login } from "./Login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import Posts from "./Posts";
+import SideMenu from "./SideMenu";
 
 export default function Dashboard() {
   const user = useSelector((state)=>state.user.user)
@@ -14,7 +15,10 @@ export default function Dashboard() {
     event.preventDefault()
   }
   const handleProfileClick=()=>{
-    return
+    console.log('Clicked')
+    return(
+      <SideMenu/>
+    )
   }
   return (
     
@@ -22,6 +26,7 @@ export default function Dashboard() {
       {user ? <>
       {/* Header */}
         <nav className="bg-gray-800">
+
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="flex-1 flex items-center justify-between sm:items-stretch sm:justify-between">
@@ -51,13 +56,14 @@ export default function Dashboard() {
                             </form>
                           </div>
                           <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <button
+                            <div
                                 type="button"
-                                onClick={handleProfileClick}
-                                className="bg-gray-800  rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white -mr-5"
+                                // onClick={handleProfileClick}
+                                className="bg-gray-800  rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white -mr-5 z-50 inset-0 transition-opacity"
                                 >
-                                <FontAwesomeIcon icon={faUserCircle} className=' text-xl'/>
-                            </button>
+                                {/* <FontAwesomeIcon icon={faUserCircle} className=' text-xl'/> */}
+                                <SideMenu/>
+                            </div>
                           </div>
                         </div> 
                     </div>
