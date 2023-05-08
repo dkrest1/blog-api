@@ -19,11 +19,9 @@ const SideMenu = ({isOpen, setIsOpen}) => {
     <>
       {/* Button to toggle the menu */}
       <button
-        // className="fixed  text-white z-50 inset-0 bg-black opacity-50 transition-opacity lg:hdden"
         onClick={toggleMenu}
-        aria-hidden="true"
       >
-        <FontAwesomeIcon icon={faUserCircle}/>
+        <FontAwesomeIcon icon={faUserCircle} className='text-2xl text-slate-200'/>
       </button>
 
       {/* The menu */}
@@ -39,12 +37,11 @@ const SideMenu = ({isOpen, setIsOpen}) => {
                 onClick={toggleMenu}
                 >
                     <FontAwesomeIcon icon={faClose}/>
-                    
                 </button>
                 <div className='flex flex-col'>
                     {/* Menu content */}
                     <FontAwesomeIcon icon={faUserCircle} className='text-5xl mt-6 text-white mb-1'/>
-                    <small className='text-xs text-center'>subscriber</small> 
+                    <small className='text-xs text-center text-slate-400'>subscriber</small> 
                     {/* would be dynamic: user's level would be fetched from backend */}
                     <nav className="mt-2 divide-y divide-slate-600">
                         <NavLink to='#' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"

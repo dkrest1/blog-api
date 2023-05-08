@@ -4,7 +4,7 @@ import logo from '../Assets/Images/logo.png'
 // import code from '../Assets/Images/code.png'
 import {NavLink, Link} from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faTimes, faClose } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -28,13 +28,13 @@ import { useSelector, useDispatch } from 'react-redux'
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-16">
                     {/* Toggle Menu Button*/}
-                    <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                    <div ref={ref}
+                     className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                         <button
                             type="button"
-                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            className="inline-flex items-center justify-center p-2 rounded-md text-slate-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                             onClick={toggleMenu}
                             >
-                            {/* <span className="sr-only">Open main menu</span> */}
                             {isOpen ? <FontAwesomeIcon icon={faTimes}/> : <FontAwesomeIcon icon={faBars}/>}
                         </button>
                     </div>
@@ -86,10 +86,16 @@ import { useSelector, useDispatch } from 'react-redux'
 
       {/* Mobile Menu */}
                 <nav ref={ref}
-                className={`sm:hidden fixed max-h-screen z-50 inset-y-0 left-0 top-16 w-64 bg-gray-800 overflow-y-auto transition duration-500 transform ${
+                className={`sm:hidden fixed max-h-screen z-50 inset-y-0 left-0 top-0 w-64 bg-gray-800 overflow-y-auto transition duration-500 transform ${
                     isOpen ? 'translate-x-0 ease-in' : ' transform -translate-x-full ease-out'
                     }`}>    
-                    <div className="px-2 pt-2 pb-3 space-y-1">
+                     <button
+                        className="absolute right-0 left-0 py-3 text-slate-200 hover:text-gray-500 focus:outline-none"
+                        onClick={closeMenu}
+                        >
+                        <FontAwesomeIcon icon={faClose} className='text-2xl'/>
+                    </button>
+                    <div className="px-2 mt-12 pt-2 pb-3 space-y-1">
                         <Link to="/"
                             className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Home
