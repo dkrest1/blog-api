@@ -54,17 +54,14 @@ export default function Dashboard() {
                               placeholder="search here..."
                               />
                               <button type="submit">
-                                <FontAwesomeIcon icon={faSearch} className='text-base absolute top-6 right-9' />
+                                <FontAwesomeIcon icon={faSearch} className='text-base absolute top-6 right-10' />
                               </button>
                             </form>
                           </div>
                           <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             <div ref={ref}
-                                // type="button"
-                                // onClick={handleProfileClick}
-                                className="bg-gray-800  rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white -mr-5 z-50 inset-0 transition-opacity"
+                                className="-mr-5 z-50 inset-0"
                                 >
-                                {/* <FontAwesomeIcon icon={faUserCircle} className=' text-xl'/> */}
                                 <SideMenu isOpen ={isOpen} setIsOpen={setIsOpen}/>{console.log(isOpen)}
                             </div>
                           </div>
