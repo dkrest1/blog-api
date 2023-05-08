@@ -6,6 +6,7 @@ import SignUpForm from './Components/SignUp';
 import Dashboard from './Components/Dashboard';
 import Footer from './Components/Footer';
 import { useState } from 'react';
+import Profile from './Components/Profile';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/sign-up' element={<SignUpForm/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path='/profile' element={<Profile/>}/>
           
         </Routes>
         <Footer/>

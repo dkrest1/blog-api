@@ -30,16 +30,18 @@ const SignUpForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Valid form data:", formValues);
       setValidated(true);
+      alert("sign up successful")
+      openModal()
       
     } else {
       setErrors(validationErrors);
     }
-    if(validated){
-        console.log("Logging in...")
-        // navigate('/login') 
-        alert("Sign up successful")
-        openModal()
-      }
+    // if(validated){
+    //     console.log("Logging in...")
+    //     // navigate('/login') 
+    //     alert("Sign up successful")
+    //     openModal()
+    //   }
   };
 
   const validateForm = (values) => {
@@ -85,8 +87,6 @@ const SignUpForm = () => {
     setShowModal(true);
   };  
   function Modal() {
-    
-  
     return (
       <div>
         {/* <button onClick={openModal}>Login</button> */}
