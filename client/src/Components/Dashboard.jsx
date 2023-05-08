@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useRef } from "react";
+// import {useClickAway} from 'ahooks'
+import {useClickAway} from 'react-use'
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -10,18 +12,19 @@ import SideMenu from "./SideMenu";
 
 export default function Dashboard() {
   const user = useSelector((state)=>state.user.user)
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const ref = useRef(null);
+  useClickAway(ref,()=>{
+    setIsOpen(false);
+  });
+
 
   const handleSearchSubmit = (event)=>{
     event.preventDefault()
   }
-  const handleProfileClick=()=>{
-    console.log('Clicked')
-    return(
-      <SideMenu/>
-    )
-  }
+  
   return (
-    
     <div className="bg-gray-200 min-h-screen">
       {user ? <>
       {/* Header */}
@@ -56,13 +59,13 @@ export default function Dashboard() {
                             </form>
                           </div>
                           <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <div
-                                type="button"
+                            <div ref={ref}
+                                // type="button"
                                 // onClick={handleProfileClick}
                                 className="bg-gray-800  rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white -mr-5 z-50 inset-0 transition-opacity"
                                 >
                                 {/* <FontAwesomeIcon icon={faUserCircle} className=' text-xl'/> */}
-                                <SideMenu/>
+                                <SideMenu isOpen ={isOpen} setIsOpen={setIsOpen}/>{console.log(isOpen)}
                             </div>
                           </div>
                         </div> 

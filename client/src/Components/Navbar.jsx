@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import { useClickAway } from 'react-use'
 import logo from '../Assets/Images/logo.png'
 // import code from '../Assets/Images/code.png'
 import {NavLink, Link} from 'react-router-dom'
@@ -9,14 +10,18 @@ import { useSelector, useDispatch } from 'react-redux'
 
  const Navbar =({})=> {
     const user = useSelector((state)=>state.user.user)
-    
 
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-
     const toggleMenu = () => setIsOpen(!isOpen);
-
     const closeMenu =()=>setIsOpen(false)
+
+    const ref = useRef(null)
+    useClickAway(ref,()=>{
+        // setIsOpen(false)
+        closeMenu()
+    })
+
+    
   return (
     <div>
         <nav className="bg-gray-800">
@@ -64,7 +69,7 @@ import { useSelector, useDispatch } from 'react-redux'
                             </div>
                         </div>
                     </div>
-                {/* Button for notifications */}
+                     {/* Button for notifications */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6   sm:pr-0">
                         {/* <NavLink to='/dashboard'>
                             <button
@@ -75,15 +80,15 @@ import { useSelector, useDispatch } from 'react-redux'
                                 <FontAwesomeIcon icon={faBell} className=' text-[19px]'/><span className=' text-[8px] text-slate-50 bg-red-700 rounded-full px-[3px] absolute left-2 top-6'>2</span>
                             </button>
                         </NavLink> */}
-                        
-                        
                     </div>
                 </div>
             </div>
 
       {/* Mobile Menu */}
-            {isOpen && (
-                <nav className="sm:hidden" id="mobile-menu">
+                <nav ref={ref}
+                className={`sm:hidden fixed max-h-screen z-50 inset-y-0 left-0 top-16 w-64 bg-gray-800 overflow-y-auto transition duration-500 transform ${
+                    isOpen ? 'translate-x-0 ease-in' : ' transform -translate-x-full ease-out'
+                    }`}>    
                     <div className="px-2 pt-2 pb-3 space-y-1">
                         <Link to="/"
                             className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
@@ -107,7 +112,6 @@ import { useSelector, useDispatch } from 'react-redux'
                         </>)}
                     </div>
                 </nav>
-                )}
         </nav>
 
     </div>
