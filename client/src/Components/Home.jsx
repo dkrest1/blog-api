@@ -29,7 +29,7 @@ const Home =({user})=> {
                     :
                     <div className='flex flex-col'>
                         <p className='text-slate-200'>Check out the latest trending blog stories  </p>
-                        <NavLink to='/posts' className='text-center'><button className='bg-slate-300 text-gray-800 hover:ring-2 hover:ring-slate-300 hover:bg-slate-700 hover:text-slate-200 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8'>Top Stories</button></NavLink>
+                        <NavLink to='/dashboard' className='text-center'><button className='bg-slate-300 text-gray-800 hover:ring-2 hover:ring-slate-300 hover:bg-slate-700 hover:text-slate-200 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8'>Top Stories</button></NavLink>
                     </div>}
                 </div>
             </section>

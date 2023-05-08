@@ -4,7 +4,19 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLessThan } from "@fortawesome/free-solid-svg-icons";
 
-
+const BackButton = ()=>{
+  const navigate = useNavigate()
+  const handleBackButton = ()=>{
+    navigate(-1);
+  }
+  return(
+    <nav className="bg-gray-800 py-1">
+      <button onClick={handleBackButton}>
+        <FontAwesomeIcon icon={faLessThan} className='text-slate-200 text-lg pl-3'/> 
+      </button>
+    </nav>
+  )
+  }
 const SignUpForm = () => {
   const [formValues, setFormValues] = useState({
     firstName: "",
@@ -15,7 +27,6 @@ const SignUpForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -128,18 +139,7 @@ const SignUpForm = () => {
       </div>
     );
   }
-  const BackButton = ()=>{
-    const handleBackButton = ()=>{
-      navigate(-1);
-    }
-    return(
-      <nav className="bg-gray-800 py-1">
-        <button onClick={handleBackButton}>
-          <FontAwesomeIcon icon={faLessThan} className='text-slate-200 text-lg pl-3'/> 
-        </button>
-      </nav>
-    )
-  }
+ 
   return (
     <div>
       <BackButton/>
@@ -259,6 +259,7 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export {BackButton}
+export default SignUpForm; 
 
 

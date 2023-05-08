@@ -7,6 +7,7 @@ import Dashboard from './Components/Dashboard';
 import Footer from './Components/Footer';
 import { useState } from 'react';
 import Profile from './Components/Profile';
+import WritingPage from './Components/Write';
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           <Route path='/sign-up' element={<SignUpForm/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path='/profile' element={<Profile/>}/>
-          
+          <Route path='/write' element={<WritingPage/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>

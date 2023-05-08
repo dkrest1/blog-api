@@ -49,7 +49,7 @@ const SideMenu = ({isOpen, setIsOpen}) => {
                         >
                             Profile
                         </NavLink>
-                        <NavLink to='#' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                        <NavLink to='/write' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
                                 href="#"
                         >
                                 Write   
