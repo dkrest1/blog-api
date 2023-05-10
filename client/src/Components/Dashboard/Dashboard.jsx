@@ -4,11 +4,13 @@ import {useClickAway} from 'react-use'
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Login } from "./Login";
+import { Login } from "../Auth/Login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import Posts from "./Posts";
 import SideMenu from "./SideMenu";
+import Navbar from "../Navbar";
+import TopMenu from "../TopMenu";
 
 export default function Dashboard() {
   const user = useSelector((state)=>state.user.user)
@@ -26,6 +28,7 @@ export default function Dashboard() {
   
   return (
     <div className="bg-gray-200 min-h-screen">
+      {/* <TopMenu/> */}
       {user ? <>
       {/* Header */}
         <nav className="bg-gray-800">
@@ -33,12 +36,7 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="flex-1 flex items-center justify-between sm:items-stretch sm:justify-between">
-                        <div className="flex-shrink-0 flex items-center">
-                            <Link to='/' className='' >
-                                <span className=' text-slate-200 text-xs md:text-2xl md:font-bold'>&lt;/&gt;</span>
-                                <span className='text-xs text-slate-200 md:text-lg md:font-semibold'>My Tech Blog</span>
-                            </Link>
-                        </div>
+                        <TopMenu/>
                         <div className=" flex flex-row justify-between px-3 gap-4">
                           <div className="">
                             <NavLink to='#' className='text-slate-200 text-sm'>
