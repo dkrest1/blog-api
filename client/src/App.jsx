@@ -1,13 +1,13 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Navbar from "./Components/Navbar";
-import { Login } from './Components/Login';
+import { Login } from './Components/Auth/Login';
 import Home from './Components/Home';
-import SignUpForm from './Components/SignUp';
-import Dashboard from './Components/Dashboard';
+import SignUpForm from './Components/Auth/SignUp';
+import Dashboard from './Components/Dashboard/Dashboard';
 import Footer from './Components/Footer';
 import { useState } from 'react';
-import Profile from './Components/Profile';
-import WritingPage from './Components/Write';
+import Profile from './Components/Dashboard/Profile';
+import WritingPage from './Components/Dashboard/Write';
 
 
 function App() {

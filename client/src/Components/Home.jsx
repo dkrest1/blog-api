@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar';
 import blog from '../Assets/Images/blog3.png'
-import { Login } from './Login';
+import { Login } from './Auth/Login';
 import { Link, NavLink } from 'react-router-dom';
 import Footer from './Footer';
 const Home =({user})=> {

@@ -44,18 +44,15 @@ const SideMenu = ({isOpen, setIsOpen}) => {
                     <small className='text-xs text-center text-slate-400'>subscriber</small> 
                     {/* would be dynamic: user's level would be fetched from backend */}
                     <nav className="mt-2 divide-y divide-slate-600">
-                        <NavLink to='#' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
-                            href="#"
+                        <NavLink to='/profile' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
                         >
                             Profile
                         </NavLink>
                         <NavLink to='/write' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
-                                href="#"
                         >
                                 Write   
                         </NavLink>
                         <NavLink to='#' className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
-                                href="#"
                          >
                                 Become an Author
                                 {/* would be dynamic: would determined based on user's current level  */}

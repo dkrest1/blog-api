@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import {BackButton} from '../Components/SignUp'
+import {BackButton} from '../Auth/SignUp'
+import TopMenu from "../TopMenu";
 // import 
 // import { PlusIcon } from "@heroicons/react/outline";
 
@@ -22,7 +23,8 @@ function WritingPage() {
   
   return (
     <div className="flex flex-col h-screen">
-        <div className=""><BackButton/></div>
+        {/* <div className=""><BackButton/></div> */}
+        <TopMenu/>
       <div className="flex-1 overflow-y-auto px-2">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-4">

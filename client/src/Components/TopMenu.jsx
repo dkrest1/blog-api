@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 
  
- const Navbar =({})=> {
+ const TopMenu =({})=> {
     const user = useSelector((state)=>state.user.user)
 
     const [isOpen, setIsOpen] = useState(false);
@@ -40,19 +40,19 @@ import { useSelector, useDispatch } from 'react-redux'
                             {isOpen ? <FontAwesomeIcon icon={faTimes}/> : <FontAwesomeIcon icon={faBars}/>}
                         </button>
                     </div>
-                    <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-between">
-                        <div className="flex-shrink-0 flex items-center">
+                    <div className="flex-1 flex items-center  sm:items-stretch sm:justify-between">
+                        <div className="flex-shrink-0 flex ml-10 ">
                             <Link to='/' className='' >
-                                <span className=' text-slate-200 text-lg md:text-2xl md:font-bold'>&lt;/&gt;</span>
+                                <span className=' text-slate-200 text-xs md:text-2xl md:font-bold'>&lt;/&gt;</span>
                                 {/* <img
                                 className="block lg:hidden h-8 w-auto"
                                 src={logo}
                                 alt="logo png"/> */}
-                                <span className='text-lg text-slate-200 md:text-lg md:font-semibold'>My Tech Blog</span>
+                                <span className='text-xs text-slate-200 md:text-lg md:font-semibold'>My Tech Blog</span>
                             </Link>
                         </div>
                         {/* Menu for larger screens */}
-                        <div className="hidden sm:block sm:ml-6  ">
+                        {/* <div className="hidden sm:block sm:ml-6  ">
                             <div className="flex space-x-4 md:items-center ">
                                 <NavLink to ="/"
                                 className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"} 
@@ -69,7 +69,7 @@ import { useSelector, useDispatch } from 'react-redux'
                                 Sign up
                                 </NavLink>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                      {/* Button for notifications */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6   sm:pr-0">
@@ -126,4 +126,4 @@ import { useSelector, useDispatch } from 'react-redux'
   )
 }
 
-export default Navbar;
+export default TopMenu;
