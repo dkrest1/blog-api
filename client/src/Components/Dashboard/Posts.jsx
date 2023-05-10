@@ -89,7 +89,7 @@ const Posts = () => {
             ))}
             <div>
                 {Array.from({ length: totalPages }).map((_, index) => (
-                <button className='mr-2' key={index} onClick={() => handlePageChange(index + 1)}>
+                <button className='mr-2 text-xs' key={index} onClick={() => handlePageChange(index + 1)}>
                     Page{index + 1}
                 </button>
                 ))}

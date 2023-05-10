@@ -47,7 +47,7 @@ const Profile = () => {
       <TopNav/>
       <div>
         {/* {postActive ?  */}
-          <div className={`transition duration-500 ${!postActive && 'hid  en -translate-x-full'}`}>
+          <div className={`mt-2 transition duration-500 ${!postActive && 'hid  en -translate-x-full'}`}>
             {postActive &&
             <div className='transition duration-500 translate-x-0'><Posts/></div>
           }
