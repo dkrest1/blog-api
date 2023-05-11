@@ -1,3 +1,4 @@
+import { set } from 'immutable'
 import React from 'react'
 import { useState } from 'react'
 import {NavLink } from 'react-router-dom'
@@ -6,16 +7,24 @@ import Posts from './Posts'
 const Profile = () => {
   const [postActive, setPostActive] = useState(true)
   const [BookmarkActive, setBookmarkActive] =useState(false)
+  const [meActive, setMeActive] = useState(false)
 
   const handlePostClick = ()=>{
     setPostActive(true)
     setBookmarkActive(false)
+    setMeActive(false)
     // console.log("post page is active")
   }
   const handleBookMarkClick = ()=>{
     setPostActive(false)
+    setMeActive(false)
     setBookmarkActive(true)
     // console.log("bookmark is active")
+  }
+  const handleMeClick =()=>{
+    setPostActive(false)
+    setBookmarkActive(false)
+    setMeActive(true);
   }
   const TopNav =()=>{
     return(
@@ -29,33 +38,53 @@ const Profile = () => {
                 className={`${postActive ? 'border-b-4 border-slate-600 px-2 font-medium':''}`}>My Posts</button>
               <button
                 onClick={handleBookMarkClick}
-                className= {`${BookmarkActive ? 'border-b-4 border-slate-600 px-2 font-medium':''}`}>Bookmark</button>
+                className= {`${BookmarkActive ? 'border-b-4 border-slate-600 px-2 font-medium':''}`}>Bookmarks</button>
             </div>
             </div>
           <div className='absolute right-0 mr-3'>
-              <NavLink to='#'>Me</NavLink>
+              <button onClick={handleMeClick}
+                className={`${meActive ? 'border-b-4 border-slate-600 px-2 font-medium' : ''}`}
+              >Me</button>
           </div>
           </div>
           </div>
       </nav>
     )
   }
-  
+  const RenderBookmarkTab = ()=>{
+    return(
+        <div className='text-center animate-swipeInRight'>
+          <p>This is bookmark tab</p>
+        </div>
+    )
+  } 
+  const RenderPostTab = ()=>{
+    return(
+      <div className=' animate-swipeInLeft'>
+        <Posts/>
+      </div>
+    )
+  }
+  const RenderMeTab = ()=>{
+    return(
+      <div className=' animate-swipeInRight text-center'>
+      <p>This is Me tab</p>
+      <p>This is Me tab</p>
+      <p>This is Me tab</p>
+      <p>This is Me tab</p>
+    </div>
+    )   
+  }
+
   return (
-    <div>
+    <div className=''>
       <TopMenu/> 
       <TopNav/>
       <div>
-        {/* {postActive ?  */}
-          <div className={`mt-2 transition duration-500 ${!postActive && 'hid  en -translate-x-full'}`}>
-            {postActive &&
-            <div className='transition duration-500 translate-x-0'><Posts/></div>
-          }
-          </div> 
-          <div className={` mt-2 text-center transform transition duration-500  ${!BookmarkActive && ' translate-x-full' }`}>
-            <p>This BookMark Page</p></div>
-            {/* } */}
-      </div>   
+         {
+          postActive ? <div className=' '><RenderPostTab/></div> : BookmarkActive ? <div><RenderBookmarkTab/></div> : meActive && <div> <RenderMeTab/></div>
+         }
+      </div>
     </div>
   )
 }
