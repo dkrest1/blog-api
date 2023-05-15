@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { UserRole } from 'src/modules/common/enum/role.enum';
+import { Role } from 'src/modules/common/enum/role.enum';
 import { Comment } from 'src/modules/comment/entities/comment.entity';
 import { Post } from 'src/modules/post/entities/post.entity';
 
@@ -29,8 +29,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.SUBSCRIBER })
-  role: UserRole;
+  @Column({ type: 'enum', enum: Role, default: Role.SUBSCRIBER })
+  role: Role;
 
   @OneToMany(() => Post, (posts) => posts.user)
   posts: Post[];

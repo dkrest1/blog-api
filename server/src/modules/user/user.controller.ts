@@ -51,7 +51,6 @@ export class UserController {
   @Get('me')
   async getUser(@Request() req: any): Promise<User> {
     const { id } = req.user;
-    // check if user exist
     const user = await this.userService.findById(id);
 
     if (!user) {

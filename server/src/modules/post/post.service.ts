@@ -5,8 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { SlugProvider } from './slug.provider';
-import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class PostService {
@@ -14,113 +12,122 @@ export class PostService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
     private readonly slugProvider: SlugProvider,
-    private readonly userService: UserService,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
-    const post = await this.uniqueSlug(createPostDto);
+  async createPost(
+    createPostDto: CreatePostDto,
+    userId: string,
+  ): Promise<Post> {
+    const uniqueSlug = await this.createUniqueSlug(createPostDto.title, userId);
 
-    const existedPost = await this.findBySlug(post.slug);
+    const existedPost = await this.findBySlug(uniqueSlug);
+
     if (existedPost) {
       throw new HttpException(
         'post existed, please create a new post',
         HttpStatus.NOT_ACCEPTABLE,
       );
     }
-
-    return await this.postRepository.save(this.postRepository.create(post));
+    return await this.postRepository.save(
+      this.postRepository.create({ ...createPostDto, slug: uniqueSlug }),
+    );
   }
 
-  async update(
-    id: string,
+  async updatePost(
+    userId: string,
+    postId: string,
     updatePostDto: UpdatePostDto,
   ): Promise<UpdatePostDto> {
-    const post = await this.findPostById(id);
-    const user = await this.findPostByUserId(post.id);
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['user'],
+    });
     try {
+      if (post.user.id !== userId) {
+        throw new HttpException(
+          'user with post does not exist',
+          HttpStatus.NOT_ACCEPTABLE,
+        );
+      }
+
       if (!post || !post.slug) {
         throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
       }
-      if (!user.id) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-
-      const slug = await this.slugProvider.slugify(updatePostDto.title);
+      const slug = await this.createUniqueSlug(
+        updatePostDto.title,
+        post.user.id,
+      );
       const PostToUpdate = { ...post, ...updatePostDto, slug };
-      const updatedPost = this.postRepository.save(PostToUpdate);
+      const updatedPost = await this.postRepository.save(PostToUpdate);
+      delete updatedPost.user;
       return updatedPost;
     } catch (err) {
-      console.log(err);
-      throw new HttpException(`${err.response}`, HttpStatus.BAD_GATEWAY);
+      throw new HttpException(
+        'user with post does not exist',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  async getPost(id: string): Promise<Post> {
-    const post = await this.findPostById(id);
+  async getPosts(page: number, limit: number): Promise<Post[]> {
+    const posts = await this.postRepository.find({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return posts;
+  }
+
+  async getPostById(id: string): Promise<Post> {
+    const post = await this.postRepository.findOneBy({ id });
     if (!post) {
       throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
     }
     return post;
   }
 
-  async getPosts(): Promise<Post[]> {
-    return;
+  async getPostsByUserId(id: string): Promise<Post[] | null> {
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoin('post.user', 'user')
+      .where(`user.id = :id`, { id })
+      .getMany();
+    return posts;
   }
 
-  async remove(id: number): Promise<string> {
-    await this.postRepository.delete(id);
-    return `This Post as ....`;
-  }
-
-  async findPostById(id: string): Promise<Post | null> {
-    return await this.postRepository.findOneBy({ id });
-  }
-
-  async findPostByUserId(id: string): Promise<User | null> {
-    const post = await this.postRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
-    return post.user;
-  }
-
-  async findBySlug(slug: string): Promise<Post | null> {
+  private async findBySlug(slug: string): Promise<Post | null> {
     return await this.postRepository.findOneBy({ slug });
   }
 
-  private async uniqueSlug(
-    createPostDto: CreatePostDto,
-  ): Promise<CreatePostDto> {
-    const uniqueSlug = await this.slugProvider.slugify(createPostDto.title);
-
-    try {
-      const existedPost = await this.findSlugs(uniqueSlug);
-      //if no title before, create post
-      if (!existedPost || existedPost.length === 0) {
-        createPostDto.slug = uniqueSlug;
-      }
-
-      //if title existed, return an error
-      if (existedPost.length === 1 && createPostDto.id === existedPost[0].id) {
-        throw new HttpException(
-          'Post title existed, please try another post title',
-          HttpStatus.NOT_ACCEPTABLE,
-        );
-      }
-    } catch (err) {
-      throw new HttpException(
-        'sorry something went wrong, you cannot create post now',
-        HttpStatus.BAD_GATEWAY,
-      );
-    }
-
-    return { ...createPostDto, slug: uniqueSlug };
+  private async createUniqueSlug(title: string, id: string): Promise<string> {
+    const slugifyTitle = await this.slugProvider.slugify(title);
+    const uniqueSlug = slugifyTitle + '-' + id;
+    return uniqueSlug;
   }
 
-  private async findSlugs(slug: string): Promise<Post[]> {
-    return await this.postRepository
+  async deletePost(id: string, userId: string): Promise<string> {
+    const post = await this.postRepository
       .createQueryBuilder('post')
-      .where('slug like :slug', { slug: `${slug}` })
-      .getMany();
+      .leftJoinAndSelect('post.user', 'user')
+      .where(`post.id  = :id`, { id })
+      .getOne();
+    try {
+      if (!post.user.id || post.user.id === null || post.user.id !== userId) {
+        throw new HttpException(
+          'user with post does not exit',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (post === null || !post) {
+        throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
+      }
+      await this.postRepository.delete(id);
+      return `This post has been deleted successfully`;
+    } catch (err) {
+      throw new HttpException(
+        'user with post does not exist',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -5,11 +5,6 @@ export class CreatePostDto {
   readonly id: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  slug: string;
-
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   title: string;
