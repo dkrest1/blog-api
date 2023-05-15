@@ -1,6 +1,6 @@
-export enum UserRole {
+export enum Role {
   ADMIN = 'admin',
+  MODERATOR = 'moderator',
   AUTHOR = 'author',
-  EDITOR = 'editor',
   SUBSCRIBER = 'subscriber',
 }

@@ -5,10 +5,8 @@ import {
   OneToMany,
   ManyToOne,
   ManyToMany,
-  JoinTable,
   UpdateDateColumn,
   CreateDateColumn,
-  JoinColumn,
 } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Comment } from 'src/modules/comment/entities/comment.entity';
@@ -45,14 +43,12 @@ export class Post {
   published: boolean;
 
   @ManyToOne(() => User, (user) => user.posts)
-  @JoinColumn()
   user: User;
 
   @OneToMany(() => Comment, (comments) => comments.post)
   comments: Comment[];
 
   @ManyToMany(() => Category, (categories) => categories.posts)
-  @JoinTable({ name: 'post_category' })
   categories: Category[];
 
   @Column({
