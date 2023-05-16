@@ -25,13 +25,17 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as Posts } from './entities/post.entity';
+import { Roles } from '../common/decorators/role.decorator';
+import { Role } from '../common/enum/role.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @ApiTags('post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.AUTHOR, Role.MODERATOR)
   @ApiResponse({
     status: 201,
     description: 'Post created successfully.',
@@ -117,5 +121,59 @@ export class PostController {
   ): Promise<string> {
     const userId: string = req.user.id;
     return this.postService.deletePost(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 201,
+    description: 'like a Post.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiParam({ name: 'id' })
+  @Post('/like/:id')
+  async likePost(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    return await this.postService.likePost(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'unlike a Post.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiParam({ name: 'id' })
+  @Post('/unlike/:id')
+  async unlikePost(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    return await this.postService.likePost(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'get post like count.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiParam({ name: 'id' })
+  @Get('like/count/:id')
+  async getlikePostCount(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    return await this.postService.getLikesCountForPost(id);
   }
 }

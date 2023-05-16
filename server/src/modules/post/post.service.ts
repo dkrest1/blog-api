@@ -104,6 +104,62 @@ export class PostService {
     return uniqueSlug;
   }
 
+  //like a post
+  async likePost(id: string): Promise<number> {
+    const post = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .where(`post.id  = :id`, { id })
+      .getOne();
+
+    console.log(post);
+
+    const liked = post.likes.includes(post.user);
+    //check if user available in the likes if not push in the userid
+    if (!liked) {
+      post.likes.push(post.user);
+      await this.updatePostLikeCount(id, 1);
+    }
+    return this.getLikesCountForPost(id);
+  }
+
+  //unlike a post
+  async unlikePost(id: string): Promise<number> {
+    const post = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .where(`post.id  = :id`, { id })
+      .getOne();
+
+    const liked = post.likes.includes(post.user);
+    //check if user available in the likes if not push in the userid
+    if (liked) {
+      const index = post.likes.indexOf(post.user);
+      if (index > -1) {
+        post.likes.splice(index, 1);
+      }
+      await this.updatePostLikeCount(id, -1);
+    }
+    return this.getLikesCountForPost(id);
+  }
+
+  // update like count
+  private async updatePostLikeCount(
+    postId: string,
+    increment: number,
+  ): Promise<void> {
+    const post = await this.getPostById(postId);
+    post.likeCount += increment;
+    await this.postRepository.save(post);
+  }
+
+  // get post likes count
+  async getLikesCountForPost(postId: string): Promise<number> {
+    const post = await this.getPostById(postId);
+    return post.likeCount;
+  }
+
+  //delete post
   async deletePost(id: string, userId: string): Promise<string> {
     const post = await this.postRepository
       .createQueryBuilder('post')
