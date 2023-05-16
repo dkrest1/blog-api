@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Role } from 'src/modules/common/enum/role.enum';
 import { Comment } from 'src/modules/comment/entities/comment.entity';
@@ -31,6 +33,10 @@ export class User {
 
   @Column({ type: 'enum', enum: Role, default: Role.SUBSCRIBER })
   role: Role;
+
+  @ManyToMany(() => Post, (post) => post.likes)
+  @JoinTable()
+  likedPosts: Post[];
 
   @OneToMany(() => Post, (posts) => posts.user)
   posts: Post[];

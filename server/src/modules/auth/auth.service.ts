@@ -14,7 +14,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
 
-    if (!user) {
+    if (!user || !(await comparePassword(password, user.password))) {
       throw new BadRequestException('Invalid Credentials');
     }
     // compare password to hashed passwords
@@ -27,7 +27,10 @@ export class AuthService {
   }
 
   async login(user: User): Promise<{ access_token: string }> {
-    const payload = { sub: user.id };
+    const payload = {
+      sub: user.id,
+      role: user.role,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

@@ -36,8 +36,11 @@ export class Post {
   })
   slug: string;
 
-  @Column('int', { array: true, nullable: true })
-  likes: number[];
+  @Column('int', { default: 0 })
+  likeCount: number;
+
+  @ManyToMany(() => User, (user) => user.likedPosts)
+  likes: User[];
 
   @Column({ default: false })
   published: boolean;
