@@ -1,67 +1,21 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, } from 'react'
+import { useNavigate } from 'react-router-dom';
+import {Card, CardBody,CardFooter,Typography,Button,CardHeader, Avatar, Popover,PopoverHandler,PopoverContent,} from "@material-tailwind/react";
+import { RocketLaunchIcon } from "@heroicons/react/24/solid";
+import { ArrowLongRightIcon } from "@heroicons/react/24/outline";  
+import { Link } from 'react-router-dom';
+import blog1Img from '../../Assets/Images/blog.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRightLong, faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
+import userAvatar from '../../Assets/Images/emma.jpg'
+import { useSelector } from 'react-redux';
+import { selectAllPosts } from '../redux/PostsSlice';
+import ReadPostPage from './ReadPostPage';
+ 
 
-const postArray =[
-    {
-        title: 'My First Blog',
-        id: 1,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My second blog post',
-        id: 2,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Third Blog',
-        id: 3,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Fourth blog post',
-        id: 4,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Fifth Blog',
-        id: 5,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Sixth blog post',
-        id: 6,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Seventh Blog',
-        id: 7,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-    {
-        title: 'My Eighth blog post',
-        id: 8,
-        content: 'commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. ',
-        date: new Date().toUTCString(),
-        image: "",
-    },
-]
 const Posts = () => {
-    
-
+    const postArray = useSelector(selectAllPosts)
     let objectsPerPage =2;
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(postArray.length / objectsPerPage);
@@ -73,18 +27,92 @@ const Posts = () => {
   const startIndex = (currentPage - 1) * objectsPerPage;
   const endIndex = startIndex + objectsPerPage;
   const currentObjects = postArray.slice(startIndex, endIndex);
+
+  const navigateTo = useNavigate()
+
+  const onReadMoreClick = (postId)=>{
+    navigateTo('/read-post-page')
+    console.log(postId)
+        }
   
+  const [likeState, setButtonState] = useState(false)
+  const [bookmarkState, setBookmarkState] = useState(false)
+  const handleLikeButton =()=>{
+    // console.log("Clicked")
+    setButtonState(!likeState)
+  }
+  const handleBookmarkButton = ()=>{
+    setBookmarkState(!bookmarkState)
+  }
   return (
     <div className='flex flex-col items-center'>
+        {/* <Cards/> */}
         <div className='flex flex-col items-center'>
             {currentObjects.map((object)=>(
-                <div key={object.id} className='flex flex-col mt-2 mb-5  p-2 text-slate-900 w-2/3 h-55 border-2 border-slate-300 truncae bg-slate-100 rounded-md'>
-                    <div>
-                        <h2 className='text-bold text-center'>{object.title}</h2>
-                        <p className='text-xs'>{object.date}</p>
-                        <p className=' '>{object.content.substring(0, 100)}...</p><button>Read more...</button>
-                    </div>
-    
+                <div key={object.id} className='flex flex-col items-center mt-2 mb-3  p-2 text-slate-900 w-2/3 rounded-md'>
+                    <Card className=" w-[14rem]">
+                        <CardHeader
+                            floated={false}
+                            color='transparent'
+                            className='rounded'>
+                                <div className="flex w-full gap-2">
+                                <Avatar
+                                    size='sm'
+                                    variant='circular'
+                                    src={userAvatar} alt='user avatar'
+                                />
+                                    <div className="flex items-center justify-between">
+                                        <Typography variant="small" color="blue-gray">
+                                        {object.user}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            <img src={blog1Img} alt='card image' className=' w-auto h-auto'/>
+                        </CardHeader>
+                        <CardBody className='-mt-5 -mb-2 z-10'>
+                            <Typography variant='h5' color='blue-gray'>
+                                {object.title}
+                            </Typography>
+                            <Typography variant='lead' color='gray' className='text-sm mt- font-normal'>
+                                {object.content.substring(0, 60)}...
+                                <button className='text-xs z-10 text-blue-500' onClick={()=>onReadMoreClick(object.id)}>Read more</button>
+                            </Typography>
+                        </CardBody>
+                        <CardFooter className='flex -mt-10 -mb-6 z-0'>
+                            <Typography className="font-normal text-[10px]">
+                                {object.date}
+                            </Typography>
+                            <Typography variant='lead' className='bg-blue-gray-50 text-gray-500 text-xs px-2 py-1'>
+                                {object.category}
+                            </Typography>
+                        </CardFooter>
+                        <CardFooter className='-mb-3 z-10 '>
+                            <div className='flex justify-between gap-2 text-xs -mt-6'>
+                                <button onClick={handleLikeButton}>
+                                    <FontAwesomeIcon icon={faHeart} className={`${likeState && 'text-red-600'}`}/> <span>{object.PostLikes}</span>
+                                </button>
+                                <button>
+                                    <FontAwesomeIcon icon={faComment}/> <span>{object.PostComments}</span>
+                                </button>
+                                <button onClick={handleBookmarkButton}>
+                                    <FontAwesomeIcon icon={faBookmark} className={`${bookmarkState && 'text-blue-900'}`}/>
+                                </button>
+                                <Popover placement="bottom-end" className=''>
+                                    <PopoverHandler>
+                                        <FontAwesomeIcon icon={faEllipsis}/>
+                                    </PopoverHandler>
+                                    <PopoverContent>
+                                        <div className=' flex flex-col z-10 items-start space-y-3'>
+                                            <button>Mute this author</button>
+                                            <button>Mute this story</button>
+                                            <button>Report</button>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                            
+                        </CardFooter>
+                    </Card>
                 </div>
             ))}
             <div>
@@ -98,5 +126,5 @@ const Posts = () => {
     </div>
   )
 }
-export {postArray}
+// export {postArray}
 export default Posts;

@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Login } from "../Auth/Login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faUserCircle, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
+// import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import Posts from "./Posts";
 import SideMenu from "./SideMenu";
 import Navbar from "../Navbar";
@@ -31,18 +32,18 @@ export default function Dashboard() {
       {/* <TopMenu/> */}
       {user ? <>
       {/* Header */}
-        <nav className="bg-gray-800">
+        <nav className="bg-">
 
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-16">
                     <div className="flex-1 flex items-center justify-between sm:items-stretch sm:justify-between">
                         <TopMenu/>
                         <div className=" flex flex-row justify-between px-3 gap-4">
-                          <div className="">
-                            <NavLink to='#' className='text-slate-200 text-sm'>
+                          {/* <div className="">
+                            <NavLink to='/write' className='text-slate-200 text-sm'>
                               Posts 
                             </NavLink>
-                          </div>
+                          </div> */}
                           <div>
                             <form onSubmit={handleSearchSubmit}>
                               <input 
@@ -60,7 +61,7 @@ export default function Dashboard() {
                             <div ref={ref}
                                 className="-mr-5 z-50 inset-0"
                                 >
-                                <SideMenu isOpen ={isOpen} setIsOpen={setIsOpen}/>{console.log(isOpen)}
+                                <SideMenu isOpen ={isOpen} setIsOpen={setIsOpen}/>
                             </div>
                           </div>
                         </div> 
@@ -70,8 +71,13 @@ export default function Dashboard() {
           </nav>
       {/* Main content */}
       <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
-        <div className="bg-white shadow-md rounded-lg px-4 py-3">
+        <div className="flex justify-between bg-white shadow-md rounded-lg px-4 py-3">
           <p className="text-gray-700">Latest Posts</p>
+          <div className="">
+            <NavLink to='/write' className=' text-slate-200 text-sm '>
+              <span><FontAwesomeIcon icon={faPencilSquare} className='text-blue-gray-800 mr-1'/>Post</span> 
+            </NavLink>
+          </div>
         </div>
         <Posts/>
       </main>
