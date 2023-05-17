@@ -26,7 +26,7 @@ function App() {
           <Route path='/profile' element={<Profiles/>}/>
           <Route path='/write' element={<WritingPage/>}/>
           {/* <Route path='/write' element={<WriteStory/>}/> */}
-          <Route path='/read-post-page' element={<PostPage/>}/>
+          <Route path='/read-post-page/:id' element={<PostPage/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>

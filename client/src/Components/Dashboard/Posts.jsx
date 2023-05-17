@@ -31,7 +31,7 @@ const Posts = () => {
   const navigateTo = useNavigate()
 
   const onReadMoreClick = (postId)=>{
-    navigateTo('/read-post-page')
+    navigateTo(`/read-post-page/${postId}`)
     console.log(postId)
         }
   

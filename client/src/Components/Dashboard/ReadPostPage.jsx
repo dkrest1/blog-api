@@ -8,10 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faBookmark, faComment, faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import Posts from './Posts'
+import { useParams } from 'react-router-dom'
 
 const ReadPostPage = () => {
+  const {id} = useParams() 
+  // console.log(id)
+
   const postArray = useSelector(selectAllPosts)
-  let postId = 1
+  let postId = Number(id)
 
   const [likeState, setLikeState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
@@ -28,7 +32,6 @@ const ReadPostPage = () => {
     setShowComment(!showComment)
   }
   const handSubmitComment =()=>{
-    // const comments = commentList.push(commentContent)
     setCommentList([...commentList, commentContent])
     setCommentContent('')
     setShowComment(!showComment)
@@ -54,13 +57,13 @@ const ReadPostPage = () => {
                   {/* <div> */}
                   <div className='flex justify-between mt-3 '>
                     <button onClick={handleLikeButton}>
-                      <FontAwesomeIcon icon={faHeart} className={`${likeState && 'text-red-600'}`}/> <span>{value.postLikes}</span>
+                      <FontAwesomeIcon icon={faHeart} className={` text-gray-700 ${likeState && 'text-red-600'}`}/> <span>{value.postLikes}</span>
                     </button>
                     <button onClick={handleCommentClick}>
-                      <FontAwesomeIcon icon={faComment}/> <span>{value.postComments}</span>
+                      <FontAwesomeIcon icon={faComment} className=' text-gray-700'/> <span>{value.postComments}</span>
                     </button>
                     <button onClick={handleBookmarkButton}>
-                      <FontAwesomeIcon icon={faBookmark} className={`${bookmarkState && 'text-blue-900'}`}/>
+                      <FontAwesomeIcon icon={faBookmark} className={` text-gray-700 ${bookmarkState && 'text-blue-900'}`}/>
                     </button>
                     <Popover placement="bottom-end" className=''>
                       <PopoverHandler>
@@ -82,7 +85,7 @@ const ReadPostPage = () => {
                       onChange={(event)=>{ 
                         setCommentContent(event.target.value)}}
                     />
-                    <button onClick={handSubmitComment} className='bg-blue-600 p-2 m-2 text-sm'>Post Comment</button>
+                    <button onClick={handSubmitComment} className='bg-blue-400 p-2 m-2 text-sm'>Post Comment</button>
                   </div>
                   <div className='mt-3'>
                     {
@@ -107,7 +110,7 @@ const ReadPostPage = () => {
                   </div>
                 </div>
               )
-            }
+            } 
           })
         }
       </div>
