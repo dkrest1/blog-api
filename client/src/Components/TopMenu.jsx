@@ -7,10 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faTimes, faClose } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
+import SideMenu from './Dashboard/SideMenu'
 
 
  
- const TopMenu =({})=> {
+ const TopMenu =()=> {
     const user = useSelector((state)=>state.user.user)
 
     const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ import { useSelector, useDispatch } from 'react-redux'
     
   return (
     <div>
-        <nav className="bg-gray-800">
+        <nav className="bg-blue-gray-50">
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-16">
                     {/* Toggle Menu Button*/}
@@ -88,7 +89,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
       {/* Mobile Menu */}
                 <nav ref={ref}
-                className={`sm:hidden fixed max-h-screen z-50 inset-y-0 left-0 top-0 w-64 bg-gray-800 overflow-y-auto transition duration-500 transform ${
+                className={`sm:hidden fixed max-h-screen z-50 inset-y-0 left-0 top-0 w-64 bg-blue-gray-50 overflow-y-auto transition duration-500 transform ${
                     isOpen ? 'translate-x-0 ease-in' : ' transform -translate-x-full ease-out'
                     }`}>    
                      <button
@@ -99,12 +100,12 @@ import { useSelector, useDispatch } from 'react-redux'
                     </button>
                     <div className="px-2 mt-12 pt-2 pb-3 space-y-1">
                         <Link to="/"
-                            className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
+                            className="text-gray-900 block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Home
                         </Link>
                         {user && (
                         <Link to="/dashboard"
-                            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
+                            className="text-gray-900 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Dashboard
                         </Link>
                          )} 
@@ -121,7 +122,6 @@ import { useSelector, useDispatch } from 'react-redux'
                     </div>
                 </nav>
         </nav>
-
     </div>
   )
 }

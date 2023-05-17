@@ -1,4 +1,4 @@
-text-color = slate 200
+text-color = grey 900
 primary background color = bg-grey-900
 button color = slate-300
-navbar bg = grey-800
+navbar bg = blue-grey-50
