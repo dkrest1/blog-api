@@ -7,9 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
 import Posts from "./Posts";
 import AvatarUploader from "./ProfilePic";
+import { userDetails } from "../redux/UserSlice";
 
 export default function Dashboard() {
-  const user = useSelector((state)=>state.user.user)
+  const userdetails = useSelector(userDetails)
   const [isOpen, setIsOpen] = useState(false);
   
   const ref = useRef(null);
@@ -24,7 +25,7 @@ export default function Dashboard() {
   
   return (
     <div className="bg-gray-200 min-h-screen">
-      {user ? 
+      {userdetails.name ? 
       <>
         <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
           <div className="flex justify-between bg-white shadow-md rounded-lg px-4 py-3">
