@@ -11,7 +11,8 @@ import userAvatar from '../../Assets/Images/emma.jpg'
 import {PencilSquareIcon, UserCircleIcon, BookmarkIcon,} from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
 import TopMenu from "../TopMenu";
-import { RenderMeTab } from "./Profile";
+// import { RenderMeTab } from "./Profile";
+import { RenderMeTab } from "./EditProfile";
 import { handleLikeButton } from "../redux/UserPostSlice";
 import { allUserPosts } from "../redux/UserPostSlice";
 import { UserPosts } from "./UserPosts";
@@ -39,14 +40,13 @@ export default function Profiles() {
       label: "Settings",
       value: "settings",
       icon: UserCircleIcon,
-      desc: <RenderMeTab/>,
+      desc: <RenderMeTab />,
     },
   ];
 
 
   return (
     <div>
-        <TopMenu/>
         <Tabs value="dashboard">
         <TabsHeader>
             {tabData.map(({ label, value, icon }) => (
