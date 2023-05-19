@@ -119,7 +119,6 @@ const ReadPostPage = () => {
 
   return (
     <div className=''>
-      <TopMenu/>
       <div className='p-3'>
         {DisplayPost()}
       </div>

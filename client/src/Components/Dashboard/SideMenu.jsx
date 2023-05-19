@@ -7,9 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 const SideMenu = ({isOpen, setIsOpen}) => {
-    const user = useSelector((state)=>state.user.user)
-    // console.log(user)
-//   const [isOpen, setIsOpen] = useState(false);
+  const user = useSelector((state)=>state.user.user)
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

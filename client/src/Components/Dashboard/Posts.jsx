@@ -1,17 +1,14 @@
 import React from 'react'
 import { useState, } from 'react'
 import { useNavigate } from 'react-router-dom';
-import {Card, CardBody,CardFooter,Typography,Button,CardHeader, Avatar, Popover,PopoverHandler,PopoverContent,} from "@material-tailwind/react";
-import { RocketLaunchIcon } from "@heroicons/react/24/solid";
-import { ArrowLongRightIcon } from "@heroicons/react/24/outline";  
-import { Link } from 'react-router-dom';
+import {Card, CardBody, CardHeader, CardFooter,Typography,Button, IconButton, Avatar, Popover,PopoverHandler,PopoverContent,} from "@material-tailwind/react";
+import { ArrowRightIcon, ArrowLeftIcon} from "@heroicons/react/24/outline";  
 import blog1Img from '../../Assets/Images/blog.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightLong, faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
 import userAvatar from '../../Assets/Images/emma.jpg'
 import { useSelector } from 'react-redux';
 import { selectAllPosts } from '../redux/PostsSlice';
-import ReadPostPage from './ReadPostPage';
  
 
 const Posts = () => {
@@ -23,6 +20,12 @@ const Posts = () => {
     const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   }
+  const handlePrevPage = ()=>{
+    setCurrentPage(currentPage - 1)
+  }
+  const handleNextPage = ()=>{
+    setCurrentPage(currentPage + 1)
+  }
   
   const startIndex = (currentPage - 1) * objectsPerPage;
   const endIndex = startIndex + objectsPerPage;
@@ -33,17 +36,49 @@ const Posts = () => {
   const onReadMoreClick = (postId)=>{
     navigateTo(`/read-post-page/${postId}`)
     console.log(postId)
-        }
+    }
   
   const [likeState, setButtonState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
   const handleLikeButton =()=>{
-    // console.log("Clicked")
     setButtonState(!likeState)
   }
   const handleBookmarkButton = ()=>{
     setBookmarkState(!bookmarkState)
   }
+const Pagination =()=>{
+  return (
+    <div className="mx-0 flex items-center gap-">
+      <Button
+        variant="text"
+        color="blue-gray"
+        className="flex items-center text-xs"
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+      >
+        <ArrowLeftIcon strokeWidth={2} className="h-2 w-2" /> Previous
+      </Button>
+      <div className="flex items-center gap1 mx-0">
+     { Array.from({ length: totalPages }).map((_, index) =>(
+        <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
+     ))
+     }
+    </div>
+      <Button
+        variant="text"
+        color="blue-gray"
+        className="flex items-center mx-0 "
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages.length-1}
+      >
+        Next
+        <ArrowRightIcon strokeWidth={2} className="h-2 w-2" />
+      </Button>
+    </div>
+    );
+  }
+
+
   return (
     <div className='flex flex-col items-center'>
         {/* <Cards/> */}
@@ -115,16 +150,9 @@ const Posts = () => {
                     </Card>
                 </div>
             ))}
-            <div>
-                {Array.from({ length: totalPages }).map((_, index) => (
-                <button className='mr-2 text-xs' key={index} onClick={() => handlePageChange(index + 1)}>
-                    Page{index + 1}
-                </button>
-                ))}
-            </div>
+            <Pagination/>
         </div>
     </div>
   )
 }
-// export {postArray}
 export default Posts;

@@ -8,6 +8,8 @@ import { faBars, faTimes, faClose } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import SideMenu from './Dashboard/SideMenu'
+import ProfileDrawer from './Drawer'
+
 
 
  
@@ -71,6 +73,9 @@ import SideMenu from './Dashboard/SideMenu'
                                 </NavLink>
                             </div>
                         </div> */}
+                    </div>
+                    <div>
+                        <ProfileDrawer/>
                     </div>
                      {/* Button for notifications */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6   sm:pr-0">

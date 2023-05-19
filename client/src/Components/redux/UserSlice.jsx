@@ -2,16 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
-    user : 'Emmanuel Ayodeji'
+    name : localStorage.getItem('userName') ||'Emmanuel Ayodeji',
+    email: localStorage.getItem('userEmail') ||'emma@gmail.com',
+    profilePic: localStorage.getItem('profilePic') || null,
+    role: localStorage.getItem('userRole') ||'subscriber', 
 }
 
 export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-
+        addFile: (state, action)=>{
+            state.profilePic = action.payload
+        },
+        nameChange: (state, action)=>{
+            state.name = action.payload
+        },
+        emailChange: (state, action)=>{
+            state.email = action.payload
+        }
     },
 })
 
-export const{}= userSlice.actions;
+export const userDetails = (state)=>state.user
+export const{addFile, nameChange, emailChange}= userSlice.actions;
 export default userSlice.reducer;
