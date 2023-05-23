@@ -1,6 +1,7 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 import blog1Img from '../../Assets/Images/blog1.png'
 import userAvatar from '../../Assets/Images/emma.jpg'
+import {userSlice} from './UserSlice'
 
 const initialState = 
     [
@@ -11,7 +12,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
+            author: "Emmanuel",
             userAvatar: userAvatar,
             postLikes: 100,
             postComments: 12,
@@ -23,8 +24,8 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
-            userAvatar: {userAvatar},
+            author: userSlice.getInitialState().name,
+            userAvatar: userSlice.getInitialState().profilePic,
             postLikes: 100,
             postComments: 12,
         },
@@ -35,7 +36,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: "",
             category: 'sport',
-            user: "Emmanuel",
+            author: "Oluwatosin",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -47,7 +48,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: "",
             category: 'sport',
-            user: "Emmanuel",
+            author: "Amoo",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -59,7 +60,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
+            author: "Tosin",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -71,7 +72,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
+            author: "Emma",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -83,7 +84,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
+            author: "Immaculate",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -95,7 +96,7 @@ const initialState =
             date: new Date().toUTCString(),
             image: blog1Img,
             category: 'sport',
-            user: "Emmanuel",
+            author: "Annoymous",
             userAvatar: {userAvatar},
             postLikes: 100,
             postComments: 12,
@@ -107,8 +108,28 @@ export const postSlice = createSlice({
     name: 'posts',
     initialState,
     reducers:{
+        addPost:{ 
+            reducer(state, action){
+            state.push(action.payload)
+            },
+            prepare(userAvatar, title, author, image, content ){
+                return{
+                    payload: {
+                        id: nanoid(),
+                        userAvatar,
+                        title,
+                        author,
+                        image,
+                        content,
+                        date: 'today',
+                        category:'rubbish'
+                    } 
+                }
+            }
+        },
        }
 })
 
+export const {addPost} = postSlice.actions
 export const selectAllPosts = (state)=>state.post
 export default postSlice.reducer

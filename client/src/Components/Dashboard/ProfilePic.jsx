@@ -7,11 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addFile, userDetails } from '../redux/UserSlice';
 // import { userDetails } from '../redux/UserSlice';
 
-const ProfileAvatar = ({selectedFile, setSelectedFile}) => {
+const ProfileAvatar = () => {
     const userdetails = useSelector(userDetails)
-    // console.log(userdetails.name)
+    // console.log(userdetails.profilePic)
     const dispatch = useDispatch()
-    const user = useSelector((state)=>state.user.name)
+    // const user = useSelector((state)=>state.user.name)
   const fileInputRef = React.createRef();
 
   const handleFileUpload = (event) => {
@@ -22,7 +22,7 @@ const ProfileAvatar = ({selectedFile, setSelectedFile}) => {
  
   useEffect(()=>{
     localStorage.setItem('profilePic', userdetails.profilePic)
-  },[selectedFile, userdetails.profilePic])
+  },[userdetails.profilePic])
 
   const handleAvatarClick = () => {
     // Trigger click event on the hidden file input element

@@ -9,10 +9,13 @@ import Profiles from './Components/Dashboard/Profiles';
 import WritingPage from './Components/Dashboard/Write';
 import PostPage from './Components/Dashboard/ReadPostPage';
 import Navbar from './Components/Navbar';
+import { useSelector } from 'react-redux';
+import { selectAllPosts } from './Components/redux/PostsSlice';
 
 
 
 function App() {
+  const postArray = useSelector(selectAllPosts)
   const initialState = localStorage.getItem("profilePic") || null;
   const [selectedFile, setSelectedFile] = useState(initialState);
 
@@ -25,11 +28,11 @@ function App() {
           <Route exact path="/" element={<Home />}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/sign-up' element={<SignUpForm/>}/>
-          <Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path='/dashboard' element={<Dashboard postArray={postArray}/>}/>
           <Route path='/profile' element={<Profiles setSelectedFile={setSelectedFile} selectedFile={selectedFile}/>}/>
           <Route path='/write' element={<WritingPage/>}/>
           {/* <Route path='/write' element={<WriteStory/>}/> */}
-          <Route path='/read-post-page/:id' element={<PostPage/>}/>
+          <Route path='/read-post-page/:id' element={<PostPage postArray={postArray} />}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
