@@ -1,21 +1,26 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { BackButton } from "../Auth/SignUp";
-import TopMenu from "../TopMenu";
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { allUserPosts } from "../redux/UserPostSlice";
 import { postAdded } from "../redux/UserPostSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { UserPosts } from "./UserPosts";
 import { Typography } from "@material-tailwind/react";
+import { userDetails } from "../redux/UserSlice";
+import Subscriber from "./Subscriber";
+import { selectAllPosts } from "../redux/PostsSlice";
+import Posts from "./Posts";
+import { PhotoIcon, } from "@heroicons/react/24/outline";
+import { addPost } from "../redux/PostsSlice";
 
 function WritingPage() {
   const userPost = useSelector(allUserPosts)
   const dispatch = useDispatch()
+  const userdetails = useSelector(userDetails)
+  const postArray= useSelector(selectAllPosts)
     const navigateTo = useNavigate();
     const [postTitle, setPostTitle] =useState('')
     const [postContent, setPostContent] =useState('')
@@ -25,10 +30,11 @@ function WritingPage() {
     event.preventDefault()
     if(postTitle && postContent){
       dispatch(
-        postAdded(postTitle, postContent)
+        addPost(userdetails.profilePic, postTitle, userdetails.name, storyImage, postContent)
       )
       setPostTitle('')
       setPostContent('')
+      setStoryImage(null)
       notify()
       localStorage.setItem('posts', JSON.stringify(userPost))
     }
@@ -37,8 +43,28 @@ function WritingPage() {
     const savedPosts = localStorage.getItem('posts')
     // console.log(JSON.parse(savedPosts))
   })
+  const [storyImage, setStoryImage] = useState(null)
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    const imageFile = URL.createObjectURL(file)
+    setStoryImage(imageFile)
+  };
+  const hanldeAddImage = () => {
+    // Trigger click event on the hidden file input element
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleRemoveImage =()=>{
+    setStoryImage(null)
+  }
+  const fileInputRef = React.createRef();
+
   return (
     <div className="flex flex-col h-screen">
+      { userdetails.role ==='subscriber' ? 
+        <Subscriber/>
+      :
       <div className="flex-1 overflow-y-auto px-2">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-4">
@@ -79,20 +105,38 @@ function WritingPage() {
                   Body
                 </label>
                 <div>
-                  <textarea className="w-full h-32"
+                  <textarea className="w-full h-32 border-b-2"
                     value={postContent}
                     onChange={(e)=>setPostContent(e.target.value)}
                   />
                 </div>
+                <button onClick={hanldeAddImage} className="flex flex-row gap-2"><span>Add Photos</span>
+                    <PhotoIcon/>
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                  ref={fileInputRef}
+                />
+                {storyImage &&
+                  <div className='relative shadow-lg'>
+                    <img src={storyImage} alt='blog-image' className=' object-fit rounded'/>
+                    <button onClick={handleRemoveImage} className="absolute left-0 right-0 "> <FontAwesomeIcon icon={faTimes} className='text-gray-600'/> </button>
+                  </div>
+                }
               </div>
             </div>
           </div>
         </div>
         <div>
           <Typography variant='h5'>Your Recent Posts</Typography>
-        <UserPosts/>
+        {/* <UserPost postArray={postArray} /> */}
+        <Posts postArray={postArray.filter((post)=>post.author===userdetails.name)}/>
         </div>
       </div>
+}
     </div>
   );
 }

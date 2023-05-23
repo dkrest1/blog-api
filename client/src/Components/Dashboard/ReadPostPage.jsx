@@ -10,12 +10,13 @@ import { useState } from 'react'
 import Posts from './Posts'
 import { useParams } from 'react-router-dom'
 
-const ReadPostPage = () => {
+const ReadPostPage = ({postArray}) => {
   const {id} = useParams() 
   // console.log(id)
 
-  const postArray = useSelector(selectAllPosts)
+  // const postArray = useSelector(selectAllPosts)
   let postId = Number(id)
+  // let postId = id
 
   const [likeState, setLikeState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)

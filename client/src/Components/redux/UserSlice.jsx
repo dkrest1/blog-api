@@ -5,7 +5,7 @@ const initialState = {
     name : localStorage.getItem('userName') ||'Emmanuel Ayodeji',
     email: localStorage.getItem('userEmail') ||'emma@gmail.com',
     profilePic: localStorage.getItem('profilePic') || null,
-    role: localStorage.getItem('userRole') ||'subscriber', 
+    role: localStorage.getItem('userRole') ||'author', 
 }
 
 export const userSlice = createSlice({

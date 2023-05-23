@@ -1,34 +1,29 @@
 import React from "react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {Tabs, TabsHeader, TabsBody, Tab, TabPanel,} from "@material-tailwind/react";
-import {Card, CardBody,CardFooter,Typography,Button,CardHeader, Avatar, Popover,PopoverHandler,PopoverContent,} from "@material-tailwind/react";
-import { Link } from 'react-router-dom';
-import blog1Img from '../../Assets/Images/blog.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightLong, faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
-import userAvatar from '../../Assets/Images/emma.jpg'
 import {PencilSquareIcon, UserCircleIcon, BookmarkIcon,} from "@heroicons/react/24/solid";
-import { useDispatch, useSelector } from "react-redux";
-import TopMenu from "../TopMenu";
-// import { RenderMeTab } from "./Profile";
 import { RenderMeTab } from "./EditProfile";
-import { handleLikeButton } from "../redux/UserPostSlice";
-import { allUserPosts } from "../redux/UserPostSlice";
-import { UserPosts } from "./UserPosts";
-
-// const user = useSelector((state)=>state.user.user)
+import { userDetails } from "../redux/UserSlice";
+import { useSelector } from "react-redux";
+import { selectAllPosts } from "../redux/PostsSlice";
+import Subscriber from "./Subscriber";
+import UserPost from "./UserPost";
+import Posts from "./Posts";
 
 
 
 export default function Profiles() {
-
+  const userdetails = useSelector(userDetails)
+  const postArray = useSelector(selectAllPosts)
+  // console.log(postArray)
+ 
   const tabData = [
     {
       label: "My Posts",
       value: "my posts",
       icon: PencilSquareIcon,
-      desc: <UserPosts/>,
+      desc: userdetails.role ==='subscriber' ? <Subscriber /> : 
+      <UserPost postArray={postArray}
+      />,
     },
     {
         label: "Bookmarks",
@@ -46,7 +41,7 @@ export default function Profiles() {
 
 
   return (
-    <div>
+    <div className="">
         <Tabs value="dashboard">
         <TabsHeader>
             {tabData.map(({ label, value, icon }) => (
@@ -58,11 +53,11 @@ export default function Profiles() {
             </Tab>
             ))}
         </TabsHeader>
-        <TabsBody>
+        <TabsBody className="">
             {tabData.map(({ value, desc }) => (
-            <TabPanel key={value} value={value}>
-                {desc}
-            </TabPanel>
+            <TabPanel key={value} value={value} className=' '>
+                  {desc}
+              </TabPanel>
             ))}
         </TabsBody>
         </Tabs>

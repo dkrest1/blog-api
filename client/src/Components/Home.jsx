@@ -23,7 +23,7 @@ const Home =()=> {
             <section className='flex flex-1 flex-col md:flex md:flex-row items-center bg-gray-8 my-3'>
                 <img className=' h-40 w-auto md:h-48 ' src={blog} alt='blog image'/>
                 <div className='flex flex-col items-center'>
-                    <div className=' text-center  font-serif mt-5 mb-5 mx-10 md:text-xl md:ml-2'><p className=' text-center -mb-8 text-base text-blue-800'>You want</p> <br/><span className='text-4xl font-extrabold text-blue-900'>lastest and Top Trending Stories</span><span className='text-xl text-blue-800 '> in and outside the tech space?</span>
+                    <div className=' text-center  font-serif mt-5 mb-5 mx-10 md:text-xl md:ml-2'><p className=' text-center -mb-8 text-base  text-gray-800'>You want</p> <br/><span className='text-4xl font-extrabold text-gray-900'>lastest and Top Trending Stories</span><span className='text-xl  text-gray-800 '> in and outside the tech space?</span>
                     </div>
                     {!userdetails.name ?
                     <> 
@@ -62,7 +62,7 @@ const Home =()=> {
                         </Typography>
                         <img src={community} />
                         <Typography variant='h6' className='text-gray-600 text-center'>
-                            Spring your inspiration from the experiences of likeminds
+                            Spring your inspiration from the experiences of writers with likeminds
                         </Typography>
                     </div>
                 </div>

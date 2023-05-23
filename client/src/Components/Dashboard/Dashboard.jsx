@@ -8,9 +8,13 @@ import { faSearch, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
 import Posts from "./Posts";
 import AvatarUploader from "./ProfilePic";
 import { userDetails } from "../redux/UserSlice";
+import { selectAllPosts } from "../redux/PostsSlice";
+import FloatingButton from "./FloatingButton";
 
 export default function Dashboard() {
   const userdetails = useSelector(userDetails)
+  const postArray = useSelector(selectAllPosts)
+  // console.log(postArray)
   const [isOpen, setIsOpen] = useState(false);
   
   const ref = useRef(null);
@@ -22,7 +26,8 @@ export default function Dashboard() {
   const handleSearchSubmit = (event)=>{
     event.preventDefault()
   }
-  
+
+
   return (
     <div className="bg-gray-200 min-h-screen">
       {userdetails.name ? 
@@ -49,8 +54,10 @@ export default function Dashboard() {
               </NavLink>
             </div>
           </div>
-          <Posts/>
-          <AvatarUploader/>
+          <Posts postArray={postArray}/>
+          <div className="border-2 h-12">
+            <FloatingButton/>
+          </div>
         </main>
       </> : <Login/>}
     </div>

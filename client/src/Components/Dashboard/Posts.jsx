@@ -6,16 +6,18 @@ import { ArrowRightIcon, ArrowLeftIcon} from "@heroicons/react/24/outline";
 import blog1Img from '../../Assets/Images/blog.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
-import userAvatar from '../../Assets/Images/emma.jpg'
+// import userAvatar from '../../Assets/Images/emma.jpg'
 import { useSelector } from 'react-redux';
 import { selectAllPosts } from '../redux/PostsSlice';
  
 
-const Posts = () => {
-    const postArray = useSelector(selectAllPosts)
+const Posts = ({postArray}) => {
+    // const postArray = useSelector(selectAllPosts)
     let objectsPerPage =2;
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(postArray.length / objectsPerPage);
+    // console.log(postArray.length)
+
   
     const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -46,36 +48,36 @@ const Posts = () => {
   const handleBookmarkButton = ()=>{
     setBookmarkState(!bookmarkState)
   }
-const Pagination =()=>{
-  return (
-    <div className="mx-0 flex items-center gap-">
-      <Button
-        variant="text"
-        color="blue-gray"
-        className="flex items-center text-xs"
-        onClick={handlePrevPage}
-        disabled={currentPage === 1}
-      >
-        <ArrowLeftIcon strokeWidth={2} className="h-2 w-2" /> Previous
-      </Button>
-      <div className="flex items-center gap1 mx-0">
-     { Array.from({ length: totalPages }).map((_, index) =>(
-        <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
-     ))
-     }
-    </div>
-      <Button
-        variant="text"
-        color="blue-gray"
-        className="flex items-center mx-0 "
-        onClick={handleNextPage}
-        disabled={currentPage === totalPages.length-1}
-      >
-        Next
-        <ArrowRightIcon strokeWidth={2} className="h-2 w-2" />
-      </Button>
-    </div>
-    );
+  const Pagination =()=>{
+    return (
+      <div className="mx-0 flex items-center gap-">
+        <Button
+          variant="text"
+          color="blue-gray"
+          className="flex items-center text-xs"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          <ArrowLeftIcon strokeWidth={2} className="h-2 w-2" /> Previous
+        </Button>
+        <div className="flex items-center gap1 mx-0">
+      { Array.from({ length: totalPages }).map((_, index) =>(
+          <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
+      ))
+      }
+      </div>
+        <Button
+          variant="text"
+          color="blue-gray"
+          className="flex items-center mx-0 "
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+          <ArrowRightIcon strokeWidth={2} className="h-2 w-2" />
+        </Button>
+      </div>
+      );
   }
 
 
@@ -94,15 +96,15 @@ const Pagination =()=>{
                                 <Avatar
                                     size='sm'
                                     variant='circular'
-                                    src={userAvatar} alt='user avatar'
+                                    src={object.userAvatar} alt='user avatar'
                                 />
                                     <div className="flex items-center justify-between">
                                         <Typography variant="small" color="blue-gray">
-                                        {object.user}
+                                        {object.author}
                                         </Typography>
                                     </div>
                                 </div>
-                            <img src={blog1Img} alt='card image' className=' w-auto h-auto'/>
+                            <img src={object.image} alt='card image' className=' w-auto h-auto'/>
                         </CardHeader>
                         <CardBody className='-mt-5 -mb-2 z-10'>
                             <Typography variant='h5' color='blue-gray'>

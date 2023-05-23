@@ -12,6 +12,7 @@ export const RenderMeTab = ()=>{
     const userdetails = useSelector(userDetails)
     const postArray = useSelector(selectAllPosts)
     const dispatch = useDispatch()
+    // console.log(userdetails.profilePic)
 
     useEffect(()=>{
         localStorage.setItem('userName',userdetails.name)
@@ -19,7 +20,7 @@ export const RenderMeTab = ()=>{
     },[userdetails.name, userdetails.email])
     return(
       <div className=' animate-swipeInRight'>
-        <div className='flex flex-col divide-y-'>
+        <div className='flex flex-col divide-y gap-5'>
           <div className='flex flex-col mt-3 items-center'>
             {!userdetails.profilePic ? <p className='text-sm text-gray-500'>Click to upload Profile image</p> :<p className='text-sm text-gray-300'>Click to change profile image</p>}
             <ProfileAvatar/>
@@ -29,10 +30,9 @@ export const RenderMeTab = ()=>{
               <p ><span className='font-medium text-sm'>{postArray.length}</span> <span className='text-sm text-slate-600'> Posts</span></p>
             </div>
           </div>
-          
-          <div>
+          <div className='pt-5'>
             <form>
-              <div className='flex flex-col'>
+              <div className='flex flex-col '>
                 <label className='text-xs'>Name</label>
                 <input type='text' minLength={2} maxLength={25}
                   className=' border-b focus:border-b-2 focus:border-blue-600' 
@@ -59,7 +59,7 @@ export const RenderMeTab = ()=>{
               {/* <button className='bg-blue-600 text-white rounded px-3 mt-4'> Update</button>          */}
             </form>
           </div>
-          <div className=' mt-6'>
+          <div className=' mt-5 pt-3'>
             {
                 userdetails.role === 'subscriber' ?<> 
                 <p className='text-base text-gray-900'>Want to publish stories? Request to be an Author</p>
@@ -68,6 +68,16 @@ export const RenderMeTab = ()=>{
                     <p className='text-base text-gray-900'>Want to be able to moderate and regulate the space? Request to be a Moderator</p>
                 <Button variant='filled' className='mt-2'>Become an Moderator</Button> </> : ""
             }
+          </div>
+          <div className='flex flex-col mt-3 gap-4 pt-3'>
+            <button className='flex flex-col items-start'>
+                <p className='text-base text-red-700'>Deactivate Account</p>
+                <p className='text-xs text-start'>Deactivating Account will suspend your account until you sign back in</p>
+            </button>
+            <button className='flex flex-col items-start'>
+                <p className='text-base text-red-700'>Delete Account</p>
+                <p className='text-xs text-start'>Permanetly delete your account and all your published contents</p>
+            </button>
           </div>
         </div>
     </div>
