@@ -36,7 +36,7 @@ const ProfileAvatar = () => {
     <div>
         <div>
             <FontAwesomeIcon icon={faUserCircle} onClick={handleAvatarClick} className={`text-7xl text-gray-700 ${userdetails.profilePic  && 'hidden'}`}/>
-            <Avatar src={userdetails.profilePic} size='xl' onClick={handleAvatarClick} className={`${!userdetails.profilePic && 'hidden'}`}/>
+            <Avatar src={userdetails.profilePic} size='xl' onClick={handleAvatarClick} className={`${!userdetails.profilePic && 'hidden'} md:w-44 md:h-44`}/>
         </div>
       <input
         type="file"

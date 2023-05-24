@@ -19,23 +19,23 @@ export const RenderMeTab = ()=>{
         localStorage.setItem('userEmail',userdetails.email)
     },[userdetails.name, userdetails.email])
     return(
-      <div className=' animate-swipeInRight'>
+      <div className='px-1 md:px-3'>
         <div className='flex flex-col divide-y gap-5'>
-          <div className='flex flex-col mt-3 items-center'>
-            {!userdetails.profilePic ? <p className='text-sm text-gray-500'>Click to upload Profile image</p> :<p className='text-sm text-gray-300'>Click to change profile image</p>}
+          <div className='flex flex-col mt-3 items-center md:-mb-3'>
+            {!userdetails.profilePic ? <p className='text-sm text-gray-500 md:text-lg'><span className='md:hidden'>Tap</span><span className='hidden md:inline'>Click </span> to upload Profile image</p> :<p className='text-sm text-gray-300 md:text-lg'><span className='md:hidden'>Tap </span> <span className='hidden md:inline'>Click </span>to change profile image</p>}
             <ProfileAvatar/>
-            <p className='text-lg -mb-2 text-gray-800 font-semibold mt-3'>{userdetails.name}</p>
-            <small className='text-xs text-gray-600'>{userdetails.email}</small>
+            <p className='text-lg -mb-2 text-gray-800 font-semibold mt-3 md:text-2xl'>{userdetails.name}</p>
+            <small className='text-xs text-gray-600 md:mt-2 md:text-sm'>{userdetails.email}</small>
             <div>
-              <p ><span className='font-medium text-sm'>{postArray.length}</span> <span className='text-sm text-slate-600'> Posts</span></p>
+              <p ><span className='font-medium text-sm'>{postArray.filter((post)=>post.author===userdetails.name).length}</span> <span className='text-sm text-slate-600'> Posts</span></p>
             </div>
           </div>
-          <div className='pt-5'>
+          <div className='pt-5 md:pt-11'>
             <form>
               <div className='flex flex-col '>
-                <label className='text-xs'>Name</label>
+                <label className='text-xs md:text-base md:font-semibold'>Name</label>
                 <input type='text' minLength={2} maxLength={25}
-                  className=' border-b focus:border-b-2 focus:border-blue-600' 
+                  className=' md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:focus:border-none md:text-lg text-gray-600' 
                 required value={userdetails.name} 
                 onChange={(event)=>{
                     dispatch(
@@ -43,10 +43,10 @@ export const RenderMeTab = ()=>{
                      event.target.value))}}
                 />
               </div> 
-              <div className='flex flex-col mt-5'>
-                <label className='text-xs'>Email address</label>
+              <div className='flex flex-col mt-5 '>
+                <label className='text-xs md:text-base md:font-semibold'>Email address</label>
                 <input type='email' 
-                  className=' border-b focus:border-b-2 focus:border-blue-600' 
+                  className='md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:text-lg md:text-gray-600' 
                 required 
                 value={userdetails.email} 
                 onChange={(event)=>{
@@ -59,24 +59,26 @@ export const RenderMeTab = ()=>{
               {/* <button className='bg-blue-600 text-white rounded px-3 mt-4'> Update</button>          */}
             </form>
           </div>
-          <div className=' mt-5 pt-3'>
+          <div className=' mt-5 pt-3 md:mt-10 md:pt-10'>
             {
-                userdetails.role === 'subscriber' ?<> 
-                <p className='text-base text-gray-900'>Want to publish stories? Request to be an Author</p>
-                <Button variant='filled' className='mt-2'>Become an Author</Button></> : 
-                userdetails.role === 'author' ?  <>
-                    <p className='text-base text-gray-900'>Want to be able to moderate and regulate the space? Request to be a Moderator</p>
-                <Button variant='filled' className='mt-2'>Become an Moderator</Button> </> : ""
+                userdetails.role === 'subscriber' ?
+                <> 
+                  <p className='text-base text-gray-900 md:text-lg'>Want to publish stories? Request to be an Author</p>
+                  <Button variant='filled' className='mt-2'>Become an Author</Button></> : 
+                  userdetails.role === 'author' ?  
+                <>
+                  <p className='text-base text-gray-900 md:text-lg'>Want to be able to moderate and regulate the space? Request to be a Moderator</p>
+                  <Button variant='filled' className='mt-2 md:mt-3'>Become an Moderator</Button> </> : ""
             }
           </div>
           <div className='flex flex-col mt-3 gap-4 pt-3'>
             <button className='flex flex-col items-start'>
-                <p className='text-base text-red-700'>Deactivate Account</p>
-                <p className='text-xs text-start'>Deactivating Account will suspend your account until you sign back in</p>
+                <p className='text-base text-red-700 md:text-xl'>Deactivate Account</p>
+                <p className='text-xs text-start md:text-sm'>Deactivating Account will suspend your account until you sign back in</p>
             </button>
             <button className='flex flex-col items-start'>
-                <p className='text-base text-red-700'>Delete Account</p>
-                <p className='text-xs text-start'>Permanetly delete your account and all your published contents</p>
+                <p className='text-base text-red-700 md:text-xl'>Delete Account</p>
+                <p className='text-xs text-start md:text-sm'>Permanetly delete your account and all your published contents</p>
             </button>
           </div>
         </div>

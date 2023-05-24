@@ -13,10 +13,8 @@ import { userDetails } from './redux/UserSlice'
 
  
  const Navbar =(selectedFile)=> {
-    const userdetails = useSelector(userDetails)
     
-
-
+    const userdetails = useSelector(userDetails)
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu =()=>setIsOpen(false)
@@ -59,19 +57,34 @@ import { userDetails } from './redux/UserSlice'
                         <div className="hidden sm:block sm:ml-6  ">
                             <div className="flex space-x-4 md:items-center ">
                                 <NavLink to ="/"
-                                className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"} 
-                                
+                                className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"} 
                                 >
                                 Home
                                 </NavLink>
+                                {!userdetails.name ?
+                                <>
                                 <NavLink to ="/login"
-                                className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
+                                className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
                                 Login
                                 </NavLink>
                                 <NavLink to ="/sign-up"
-                                className={({isActive, isPending})=> isActive ? " bg-gray-900 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
+                                className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
                                 Sign up
-                                </NavLink>
+                                </NavLink> 
+                                </>
+                                : 
+                                <>
+                                    <NavLink to ='/dashboard'
+                                        className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}
+                                    >
+                                        Dashboard
+                                    </NavLink>
+                                    <NavLink to ='/profile'
+                                        className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}
+                                    >
+                                        Profile
+                                    </NavLink>
+                                </>}
                             </div>
                         </div>
                     </div>

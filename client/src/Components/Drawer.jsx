@@ -56,32 +56,33 @@ const ProfileDrawer =(selectedFile)=> {
                     {/* Menu content */}
                     { userdetails.profilePic ? <Avatar src={userdetails.profilePic} size='xl' className=' self-center'/> : <FontAwesomeIcon icon={faUserCircle} className='text-5xl mt-6 text-white mb-1'/>}
                     {/* <ProfileAvatar/> */}
+                    <h3 className="text-white font-semibold text-center">{userdetails.name}</h3>
                     <small className={`text-xs text-center text-gray-400 ${!userdetails.name && ' hidden'}`}>{userdetails.role}</small> 
                     {/* would be dynamic: user's level would be fetched from backend */}
                     <nav className="mt-2 divide-y divide-slate-600">
                         {
                         userdetails.name ?
                         <>
-                          <NavLink to='/profile' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                          <NavLink to='/profile' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900 "
                           >
                               Profile
                           </NavLink>
-                          <NavLink to='/write' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                          <NavLink to='/write' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
                           >
                                   Write   
                           </NavLink>
-                          <NavLink to='#' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                          <NavLink to='#' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
                           >
                                   Become an Author
                                   {/* would be dynamic: would determined based on user's current level  */}
                           </NavLink>
                         </> : 
                         <>
-                          <NavLink to='/login' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                          <NavLink to='/login' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
                             >
                                 Login   
                           </NavLink>
-                          <NavLink to='/signup' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-gray-800"
+                          <NavLink to='/signup' onClick={closeDrawerRight} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
                           >
                                   Sign Up
                                   {/* would be dynamic: would determined based on user's current level  */}
@@ -95,7 +96,7 @@ const ProfileDrawer =(selectedFile)=> {
                 <div className='flex flex-col pb-2'>
                     <div className='text-white text-center'>
                         {
-                          userdetails.name ? <button >Log Out</button>
+                          userdetails.name ? <button className="hover:text-white hover:font-semibold" >Log Out</button>
                           :
                           <NavLink to='/login'>Login</NavLink>
                         }
