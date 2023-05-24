@@ -47,8 +47,8 @@ export default function Profiles() {
             {tabData.map(({ label, value, icon }) => (
             <Tab key={value} value={value}>
                 <div className="flex items-center gap-2">
-                {React.createElement(icon, { className: "w-5 h-5" })}
-                {label}
+                {React.createElement(icon, { className: "w-5 h-5 md:w-7 md:h-7" })}
+                <span className="md:text-lg">{label}</span>
                 </div>
             </Tab>
             ))}
@@ -56,7 +56,7 @@ export default function Profiles() {
         <TabsBody className="">
             {tabData.map(({ value, desc }) => (
             <TabPanel key={value} value={value} className=' '>
-                  {desc}
+                  <div>{desc}</div>
               </TabPanel>
             ))}
         </TabsBody>

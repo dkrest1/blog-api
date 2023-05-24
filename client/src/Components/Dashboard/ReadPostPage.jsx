@@ -9,14 +9,13 @@ import { faHeart, faBookmark, faComment, faEllipsis } from '@fortawesome/free-so
 import { useState } from 'react'
 import Posts from './Posts'
 import { useParams } from 'react-router-dom'
+import { userDetails } from '../redux/UserSlice'
 
 const ReadPostPage = ({postArray}) => {
   const {id} = useParams() 
-  // console.log(id)
-
+  const userdetails = useSelector(userDetails)
   // const postArray = useSelector(selectAllPosts)
   let postId = Number(id)
-  // let postId = id
 
   const [likeState, setLikeState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
@@ -49,11 +48,11 @@ const ReadPostPage = ({postArray}) => {
                 <div key={value.id} className='flex flex-col '>
                   <h2 className='font-semibold text-2xl'>{value.title}</h2>
                   <p><Avatar src={value.userAvatar} size='xs'/>
-                    <span className='text-xs ml-1'>{value.user}</span></p>
+                    <span className='text-xs ml-1'>{value.author}</span></p>
                   <div className='flex flex-col items-center'>
                   <img src={value.image} className=' w-40'/>
                   </div>
-                  <p>{value.content}</p>
+                  <p className='px-2'>{value.content}</p>
                   <small className='text-xs text-gray-600'>{value.date}</small>
                   {/* <div> */}
                   <div className='flex justify-between mt-3 '>
@@ -96,7 +95,8 @@ const ReadPostPage = ({postArray}) => {
                           <TimelineConnector/>
                           <TimelineHeader>
                             <TimelineIcon className='p-0'>
-                              <Avatar src={value.userAvatar} size='xs'/>
+                              {/* <Avatar src={value.userAvatar} size='xs'/> */}
+                              <Avatar src={userdetails.profilePic} size='xs'/>
                             </TimelineIcon>
                           </TimelineHeader>
                           <TimelineBody>
@@ -125,7 +125,7 @@ const ReadPostPage = ({postArray}) => {
       </div>
       <div className='mt-2 p-2'>
         <p className='text-gray-600'>Check related posts</p>
-        <Posts/>
+        <Posts postArray={postArray}/>
       </div>
     </div>
   )

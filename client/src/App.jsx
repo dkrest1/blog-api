@@ -11,6 +11,7 @@ import PostPage from './Components/Dashboard/ReadPostPage';
 import Navbar from './Components/Navbar';
 import { useSelector } from 'react-redux';
 import { selectAllPosts } from './Components/redux/PostsSlice';
+import ReadPostPage from './Components/Dashboard/ReadPostPage';
 
 
 
@@ -32,7 +33,8 @@ function App() {
           <Route path='/profile' element={<Profiles setSelectedFile={setSelectedFile} selectedFile={selectedFile}/>}/>
           <Route path='/write' element={<WritingPage/>}/>
           {/* <Route path='/write' element={<WriteStory/>}/> */}
-          <Route path='/read-post-page/:id' element={<PostPage postArray={postArray} />}/>
+          {/* <Route path='/read-post-page/:id' element={<PostPage postArray={postArray} />}/> */}
+          <Route path='/read-post-page/:id' element={<ReadPostPage postArray={postArray} />}/>
         </Routes>
         <Footer/>
       </BrowserRouter>

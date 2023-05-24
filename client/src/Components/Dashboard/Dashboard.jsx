@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {useClickAway} from 'react-use'
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -27,35 +27,34 @@ export default function Dashboard() {
     event.preventDefault()
   }
 
-
   return (
     <div className="bg-gray-200 min-h-screen">
       {userdetails.name ? 
       <>
         <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
           <div className="flex justify-between bg-white shadow-md rounded-lg px-4 py-3">
-            <p className="text-gray-700">Latest Posts</p>
+            <p className="text-gray-700 md:text-2xl">Latest Posts</p>
             <div>
               <form onSubmit={handleSearchSubmit}>
                 <input 
-                className=' w-[120px] h-5 text-xs p-1 border-collapse border-b-2'
+                className=' w-[120px] md:w-[400px] h-5 md:h-8 text-xs md:text-lg p-1 md:p-2 border-collapse border-b-2'
                 type='search' 
                 id='search'
                 placeholder="search here..."
                 />
-                <button type="submit">
-                  <FontAwesomeIcon icon={faSearch} className='text-base -ml-6 text-gray-600' />
-                </button>
+                {/* <button type="submit">
+                  <FontAwesomeIcon icon={faSearch} className='text-base md:text-lg -ml-6 md:-ml-12 text-gray-600' />
+                </button> */}
               </form>
             </div>
             <div className="">
-              <NavLink to='/write' className=' text-slate-200 text-sm '>
-                <span><FontAwesomeIcon icon={faPencilSquare} className='text-blue-gray-800 mr-1'/>Post</span> 
+              <NavLink to='/write' className=' text-blue-gray-800 text-sm md:text-xl '>
+                <span><FontAwesomeIcon icon={faPencilSquare} className='text-blue-gray-800 mr-1 md:mr-2'/>Post</span> 
               </NavLink>
             </div>
           </div>
           <Posts postArray={postArray}/>
-          <div className="border-2 h-12">
+          <div className="border-2 h-12 md:hidden">
             <FloatingButton/>
           </div>
         </main>

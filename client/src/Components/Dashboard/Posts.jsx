@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState, } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import {Card, CardBody, CardHeader, CardFooter,Typography,Button, IconButton, Avatar, Popover,PopoverHandler,PopoverContent,} from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon} from "@heroicons/react/24/outline";  
 import blog1Img from '../../Assets/Images/blog.png'
@@ -12,13 +12,16 @@ import { selectAllPosts } from '../redux/PostsSlice';
  
 
 const Posts = ({postArray}) => {
+  // console.log()
     // const postArray = useSelector(selectAllPosts)
+    // console.log(postArray)
     let objectsPerPage =2;
     const [currentPage, setCurrentPage] = useState(1);
+    
     const totalPages = Math.ceil(postArray.length / objectsPerPage);
     // console.log(postArray.length)
 
-  
+   
     const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   }
@@ -37,6 +40,8 @@ const Posts = ({postArray}) => {
 
   const onReadMoreClick = (postId)=>{
     navigateTo(`/read-post-page/${postId}`)
+    // navigateTo('/profile')
+
     console.log(postId)
     }
   
@@ -54,27 +59,27 @@ const Posts = ({postArray}) => {
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center text-xs"
+          className="flex items-center text-xs md:text-base"
           onClick={handlePrevPage}
           disabled={currentPage === 1}
         >
-          <ArrowLeftIcon strokeWidth={2} className="h-2 w-2" /> Previous
+          <ArrowLeftIcon strokeWidth={2} className="h-2 w-2 md:h-6 md:w-7 " /> Previous
         </Button>
         <div className="flex items-center gap1 mx-0">
       { Array.from({ length: totalPages }).map((_, index) =>(
-          <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
+          <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0 md:text-base' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
       ))
       }
       </div>
         <Button
           variant="text"
           color="blue-gray"
-          className="flex items-center mx-0 "
+          className="flex items-center mx-0 md:text-base"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
         >
           Next
-          <ArrowRightIcon strokeWidth={2} className="h-2 w-2" />
+          <ArrowRightIcon strokeWidth={2} className="h-2 w-2 md:w-7 md:h-6" />
         </Button>
       </div>
       );
@@ -82,16 +87,16 @@ const Posts = ({postArray}) => {
 
 
   return (
-    <div className='flex flex-col items-center'>
+    <div className='flex flex-col md:flex-r items-center'>
         {/* <Cards/> */}
-        <div className='flex flex-col items-center'>
+        <div className='flex flex-col md:flex-row md:gap-8 items-center'>
             {currentObjects.map((object)=>(
-                <div key={object.id} className='flex flex-col items-center mt-2 mb-3  p-2 text-slate-900 w-2/3 rounded-md'>
-                    <Card className=" w-[14rem]">
+                <div key={object.id} className='flex flex-col items-center mt-2 mb-3 w-2/3 rounded-md md:'>
+                    <Card className=" w-[14rem] md:w-3/4 md:flex md:flex-col">
                         <CardHeader
                             floated={false}
                             color='transparent'
-                            className='rounded'>
+                            className='rounded md:w-fit md:pr-5'>
                                 <div className="flex w-full gap-2">
                                 <Avatar
                                     size='sm'
@@ -99,24 +104,26 @@ const Posts = ({postArray}) => {
                                     src={object.userAvatar} alt='user avatar'
                                 />
                                     <div className="flex items-center justify-between">
-                                        <Typography variant="small" color="blue-gray">
+                                        <Typography variant="small" color="blue-gray" className='md:text-lg'>
                                         {object.author}
                                         </Typography>
                                     </div>
                                 </div>
-                            <img src={object.image} alt='card image' className=' w-auto h-auto'/>
+                            <img src={object.image} alt='card image' className=' w-auto h-auto md:w-30 md:h-40'/>
                         </CardHeader>
                         <CardBody className='-mt-5 -mb-2 z-10'>
                             <Typography variant='h5' color='blue-gray'>
                                 {object.title}
                             </Typography>
-                            <Typography variant='lead' color='gray' className='text-sm mt- font-normal'>
+                            <Typography variant='lead' color='gray' className='text-sm  md:text-lg font-normal'>
                                 {object.content.substring(0, 60)}...
-                                <button className='text-xs z-10 text-blue-500' onClick={()=>onReadMoreClick(object.id)}>Read more</button>
+                                <button className='text-xs md:text-lg z-10 text-blue-500' onClick={()=>onReadMoreClick(object.id)}>Read more</button>
+                                {/* <NavLink to={`/read-post-page/${object.id}`} className='text-xs md:text-lg z-10 text-blue-500'>Read more</NavLink> */}
+
                             </Typography>
                         </CardBody>
-                        <CardFooter className='flex -mt-10 -mb-6 z-0'>
-                            <Typography className="font-normal text-[10px]">
+                        <CardFooter className='flex flex-row -mt-10 -mb-6 z-0 md:-mt-9 md:justify-between'>
+                            <Typography className="font-normal text-[10px] md:text-sm">
                                 {object.date}
                             </Typography>
                             <Typography variant='lead' className='bg-blue-gray-50 text-gray-500 text-xs px-2 py-1'>
@@ -124,7 +131,7 @@ const Posts = ({postArray}) => {
                             </Typography>
                         </CardFooter>
                         <CardFooter className='-mb-3 z-10 '>
-                            <div className='flex justify-between gap-2 text-xs -mt-6'>
+                            <div className='flex justify-between gap-2 text-xs -mt-6 md:-mt-3'>
                                 <button onClick={handleLikeButton}>
                                     <FontAwesomeIcon icon={faHeart} className={`${likeState && 'text-red-600'}`}/> <span>{object.PostLikes}</span>
                                 </button>
@@ -152,7 +159,9 @@ const Posts = ({postArray}) => {
                     </Card>
                 </div>
             ))}
-            <Pagination/>
+        </div>
+        <div className='md:mt-8'>
+          <Pagination/>
         </div>
     </div>
   )

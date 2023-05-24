@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux'
 import Posts from './Posts'
 import FloatingButton from './FloatingButton'
 
-const UserPost = ({postArray}) => {
+const UserPost = () => {
     const userdetails = useSelector(userDetails)
+    const postArray = useSelector(selectAllPosts)
   return (
     <div>
       {
