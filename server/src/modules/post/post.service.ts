@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { SlugProvider } from './slug.provider';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class PostService {
@@ -12,6 +13,7 @@ export class PostService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
     private readonly slugProvider: SlugProvider,
+    private readonly userService: UserService,
   ) {}
 
   async createPost(
@@ -105,52 +107,44 @@ export class PostService {
   }
 
   //like a post
-  async likePost(id: string): Promise<number> {
+  async likePost(userId: string, postId: string): Promise<number> {
+    const user = await this.userService.findById(userId);
     const post = await this.postRepository
       .createQueryBuilder('post')
-      .leftJoinAndSelect('post.user', 'user')
-      .where(`post.id  = :id`, { id })
+      .leftJoinAndSelect('post.likes', 'likes')
+      .where(`post.id  = :postId`, { postId })
       .getOne();
 
-    console.log(post);
+    const userLikedPost = post.likes.find((user) => user.id === userId);
 
-    const liked = post.likes.includes(post.user);
     //check if user available in the likes if not push in the userid
-    if (!liked) {
-      post.likes.push(post.user);
-      await this.updatePostLikeCount(id, 1);
+    if (!userLikedPost) {
+      post.likes.push(user);
+      post.likeCount += 1;
+      await this.postRepository.save(post);
     }
-    return this.getLikesCountForPost(id);
+    return post.likeCount;
   }
 
   //unlike a post
-  async unlikePost(id: string): Promise<number> {
+  async unlikePost(userId: string, postId: string): Promise<number> {
     const post = await this.postRepository
       .createQueryBuilder('post')
-      .leftJoinAndSelect('post.user', 'user')
-      .where(`post.id  = :id`, { id })
+      .leftJoinAndSelect('post.likes', 'likes')
+      .where(`post.id  = :postId`, { postId })
       .getOne();
 
-    const liked = post.likes.includes(post.user);
+    const userLikedPost = post.likes.find((user) => user.id === userId);
     //check if user available in the likes if not push in the userid
-    if (liked) {
-      const index = post.likes.indexOf(post.user);
+    if (userLikedPost) {
+      const index = post.likes.indexOf(userLikedPost);
       if (index > -1) {
         post.likes.splice(index, 1);
+        post.likeCount -= 1;
+        await this.postRepository.save(post);
       }
-      await this.updatePostLikeCount(id, -1);
     }
-    return this.getLikesCountForPost(id);
-  }
-
-  // update like count
-  private async updatePostLikeCount(
-    postId: string,
-    increment: number,
-  ): Promise<void> {
-    const post = await this.getPostById(postId);
-    post.likeCount += increment;
-    await this.postRepository.save(post);
+    return post.likeCount;
   }
 
   // get post likes count

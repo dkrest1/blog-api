@@ -34,6 +34,9 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.SUBSCRIBER })
   role: Role;
 
+  @Column({ type: 'bytea', nullable: true })
+  profilePicture: Buffer;
+
   @ManyToMany(() => Post, (post) => post.likes)
   @JoinTable()
   likedPosts: Post[];
@@ -43,6 +46,15 @@ export class User {
 
   @OneToMany(() => Comment, (comments) => comments.user)
   comments: Comment[];
+
+  @Column({ type: 'bool', default: false })
+  active: boolean;
+
+  @Column({ nullable: true })
+  authToken: string;
+
+  @Column({ nullable: true })
+  otp: string;
 
   @CreateDateColumn()
   created_at: Date;
