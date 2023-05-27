@@ -11,9 +11,9 @@ import { Post } from 'src/modules/post/entities/post.entity';
 
 @Entity()
 export class Comment {
-  @PrimaryGeneratedColumn()
-  id: number;
-  @Column()
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column({ type: 'text' })
   comment: string;
   @ManyToOne(() => User, (user) => user.comments)
   user: User;
