@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { hashPassword } from '../common/utils.';
-import { Post } from '../post/entities/post.entity';
+import { Role } from '../common/enum/role.enum';
 
 @Injectable()
 export class UserService {
@@ -45,6 +50,28 @@ export class UserService {
     return updatedUser;
   }
 
+  async updateUserRole(email: string, role: Role): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (user.active === false) {
+      throw new HttpException('user is not active', HttpStatus.BAD_REQUEST);
+    }
+
+    const userToUpdate = {
+      ...user,
+      role,
+    };
+
+    const updatedUser = await this.userRepository.save(userToUpdate);
+    delete updatedUser.password;
+    delete updatedUser.otp;
+    delete updatedUser.authToken;
+    return updatedUser;
+  }
+
   async findById(id: string): Promise<User | null> {
     return await this.userRepository.findOneBy({
       id,
@@ -55,6 +82,14 @@ export class UserService {
     return await this.userRepository.findOneBy({
       email,
     });
+  }
+
+  async findUsers(page: number, limit: number): Promise<User[]> {
+    const users = await this.userRepository.find({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return users;
   }
 
   async remove(id: string): Promise<string> {

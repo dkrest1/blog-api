@@ -10,7 +10,6 @@ import { User } from './modules/user/entities/user.entity';
 import { Post } from './modules/post/entities/post.entity';
 import { Category } from './modules/category/entities/category.entity';
 import { Comment } from './modules/comment/entities/comment.entity';
-import { PaginateModule } from './modules/paginate/paginate.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { CategoryModule } from './modules/category/category.module';
 
@@ -38,7 +37,6 @@ import { CategoryModule } from './modules/category/category.module';
     SearchModule,
     AuthModule,
     PostModule,
-    PaginateModule,
     CommentModule,
     CategoryModule,
   ],

@@ -11,6 +11,7 @@ import {
   UseGuards,
   UnprocessableEntityException,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard.guard';
@@ -18,6 +19,10 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UpdateUserrole } from './dto/update-user-role.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../common/decorators/role.decorator';
+import { Role } from '../common/enum/role.enum';
 
 @ApiTags('user')
 @Controller('user')
@@ -80,6 +85,27 @@ export class UserController {
     });
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiResponse({
+    status: 200,
+    description: 'Get list of Users on the Application',
+  })
+  @ApiResponse({ status: 401, description: 'Unforbidden Resource' })
+  @Get()
+  async getUsers(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ): Promise<User[]> {
+    const users = await this.userService.findUsers(page, limit);
+    users.forEach((user) => {
+      delete user.password;
+      delete user.authToken;
+      delete user.otp;
+    });
+    return users;
+  }
+
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
@@ -90,5 +116,22 @@ export class UserController {
   async remove(@Request() req: any): Promise<string> {
     const { id } = req.user;
     return await this.userService.remove(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post('admin/updaterole')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @ApiBody({ type: [UpdateUserrole] })
+  @ApiResponse({
+    status: 201,
+    description: 'The User Role has been successfully Updated.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  async updateRole(@Body() updateUserRole: UpdateUserrole): Promise<User> {
+    return await this.userService.updateUserRole(
+      updateUserRole.email,
+      updateUserRole.role,
+    );
   }
 }

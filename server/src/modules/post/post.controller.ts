@@ -136,9 +136,11 @@ export class PostController {
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
-    id: string,
+    postId: string,
+    @Request() req: any,
   ) {
-    return await this.postService.likePost(id);
+    const userId: string = req.user.id;
+    return await this.postService.likePost(userId, postId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -154,9 +156,11 @@ export class PostController {
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
-    id: string,
+    postId: string,
+    @Request() req: any,
   ) {
-    return await this.postService.likePost(id);
+    const userId: string = req.user.id;
+    return await this.postService.unlikePost(userId, postId);
   }
 
   @UseGuards(JwtAuthGuard)
