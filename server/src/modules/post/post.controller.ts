@@ -163,21 +163,22 @@ export class PostController {
     return await this.postService.unlikePost(userId, postId);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiResponse({
-    status: 200,
-    description: 'get post like count.',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiParam({ name: 'id' })
-  @Get('like/count/:id')
-  async getlikePostCount(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await this.postService.getLikesCountForPost(id);
-  }
+  //this is not really a necessay endpoint
+  // @UseGuards(JwtAuthGuard)
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'get post like count.',
+  // })
+  // @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  // @ApiParam({ name: 'id' })
+  // @Get('like/count/:id')
+  // async getlikePostCount(
+  //   @Param(
+  //     'id',
+  //     new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+  //   )
+  //   id: string,
+  // ) {
+  //   return await this.postService.getLikesCountForPost(id);
+  // }
 }

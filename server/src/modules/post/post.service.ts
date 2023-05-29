@@ -75,6 +75,7 @@ export class PostService {
     const posts = await this.postRepository.find({
       skip: (page - 1) * limit,
       take: limit,
+      relations: ['user', 'comments'],
     });
     return posts;
   }
@@ -90,7 +91,8 @@ export class PostService {
   async getPostsByUserId(id: string): Promise<Post[] | null> {
     const posts = await this.postRepository
       .createQueryBuilder('post')
-      .leftJoin('post.user', 'user')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoinAndSelect('post.comments', 'comments')
       .where(`user.id = :id`, { id })
       .getMany();
     return posts;
@@ -144,12 +146,6 @@ export class PostService {
         await this.postRepository.save(post);
       }
     }
-    return post.likeCount;
-  }
-
-  // get post likes count
-  async getLikesCountForPost(postId: string): Promise<number> {
-    const post = await this.getPostById(postId);
     return post.likeCount;
   }
 
