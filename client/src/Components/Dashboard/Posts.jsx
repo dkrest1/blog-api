@@ -75,7 +75,7 @@ const Posts = ({postArray}) => {
   const handleLikeButton =(postId)=>{
     currentObjects.filter((obj)=>{
       if(postId ===obj.id){
-        console.log(postId + 'is available')
+        console.log(postId + ' is available')
         setButtonState(!likeState)
 
       }
