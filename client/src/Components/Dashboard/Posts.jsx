@@ -11,18 +11,9 @@ import { useSelector } from 'react-redux';
 import { selectAllPosts } from '../redux/PostsSlice';
  
 
-const Posts = ({postArray}) => {
-  // console.log()
-    // const postArray = useSelector(selectAllPosts)
-    // console.log(postArray)
-    let objectsPerPage =2;
-    const [currentPage, setCurrentPage] = useState(1);
-    
-    const totalPages = Math.ceil(postArray.length / objectsPerPage);
-    // console.log(postArray.length)
+const Pagination =({totalPages, currentPage, setCurrentPage})=>{
 
-   
-    const handlePageChange = (pageNumber) => {
+  const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   }
   const handlePrevPage = ()=>{
@@ -32,58 +23,68 @@ const Posts = ({postArray}) => {
     setCurrentPage(currentPage + 1)
   }
   
+  return (
+    <div className="mx-0 flex items-center gap-">
+      <Button
+        variant="text"
+        color="blue-gray"
+        className="flex items-center text-xs md:text-base"
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+      >
+        <ArrowLeftIcon strokeWidth={2} className="h-2 w-2 md:h-6 md:w-7 " /> Previous
+      </Button>
+      <div className="flex items-center gap1 mx-0">
+    { Array.from({ length: totalPages }).map((_, index) =>(
+        <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0 md:text-base' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
+    ))
+    }
+    </div>
+      <Button
+        variant="text"
+        color="blue-gray"
+        className="flex items-center mx-0 md:text-base"
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+      >
+        Next
+        <ArrowRightIcon strokeWidth={2} className="h-2 w-2 md:w-7 md:h-6" />
+      </Button>
+    </div>
+    );
+}
+
+const Posts = ({postArray}) => {
+    let objectsPerPage =2;
+  
+    const [currentPage, setCurrentPage] = useState(1);  
+    const totalPages = Math.ceil(postArray.length / objectsPerPage);
+    // console.log(postArray.length)
+
   const startIndex = (currentPage - 1) * objectsPerPage;
   const endIndex = startIndex + objectsPerPage;
   const currentObjects = postArray.slice(startIndex, endIndex);
 
   const navigateTo = useNavigate()
-
   const onReadMoreClick = (postId)=>{
     navigateTo(`/read-post-page/${postId}`)
-    // navigateTo('/profile')
-
-    console.log(postId)
     }
   
   const [likeState, setButtonState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
-  const handleLikeButton =()=>{
-    setButtonState(!likeState)
+  const handleLikeButton =(postId)=>{
+    currentObjects.filter((obj)=>{
+      if(postId ===obj.id){
+        console.log(postId + 'is available')
+        setButtonState(!likeState)
+
+      }
+    })
   }
   const handleBookmarkButton = ()=>{
     setBookmarkState(!bookmarkState)
   }
-  const Pagination =()=>{
-    return (
-      <div className="mx-0 flex items-center gap-">
-        <Button
-          variant="text"
-          color="blue-gray"
-          className="flex items-center text-xs md:text-base"
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-        >
-          <ArrowLeftIcon strokeWidth={2} className="h-2 w-2 md:h-6 md:w-7 " /> Previous
-        </Button>
-        <div className="flex items-center gap1 mx-0">
-      { Array.from({ length: totalPages }).map((_, index) =>(
-          <IconButton key={index} variant={`${index+1 ===currentPage ? 'filled' : 'text'}`} color={`${index+1 ===currentPage ? 'blue' : 'blue-gray'}`} className='px-0 mx-0 md:text-base' onClick={()=>handlePageChange(index+1)}>{index+1} </IconButton>
-      ))
-      }
-      </div>
-        <Button
-          variant="text"
-          color="blue-gray"
-          className="flex items-center mx-0 md:text-base"
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-          <ArrowRightIcon strokeWidth={2} className="h-2 w-2 md:w-7 md:h-6" />
-        </Button>
-      </div>
-      );
-  }
+  
 
 
   return (
@@ -132,7 +133,7 @@ const Posts = ({postArray}) => {
                         </CardFooter>
                         <CardFooter className='-mb-3 z-10 '>
                             <div className='flex justify-between gap-2 text-xs -mt-6 md:-mt-3'>
-                                <button onClick={handleLikeButton}>
+                                <button onClick={()=>handleLikeButton(object.id)}>
                                     <FontAwesomeIcon icon={faHeart} className={`${likeState && 'text-red-600'}`}/> <span>{object.PostLikes}</span>
                                 </button>
                                 <button>
@@ -161,7 +162,7 @@ const Posts = ({postArray}) => {
             ))}
         </div>
         <div className='md:mt-8'>
-          <Pagination/>
+          <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
         </div>
     </div>
   )
