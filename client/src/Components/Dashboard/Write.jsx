@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { allUserPosts } from "../redux/UserPostSlice";
-import { postAdded } from "../redux/UserPostSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Typography } from "@material-tailwind/react";
@@ -15,6 +14,7 @@ import { selectAllPosts } from "../redux/PostsSlice";
 import Posts from "./Posts";
 import { PhotoIcon, } from "@heroicons/react/24/outline";
 import { addPost } from "../redux/PostsSlice";
+import axios from "axios";
 
 function WritingPage() {
   const userPost = useSelector(allUserPosts)
@@ -25,7 +25,8 @@ function WritingPage() {
     const [postTitle, setPostTitle] =useState('')
     const [postContent, setPostContent] =useState('')
 
-    const notify =()=> toast('Published successfuly')
+  const notify =()=> toast('Published successfuly')
+
   const onPublishPost =(event)=>{
     event.preventDefault()
     if(postTitle && postContent){
@@ -37,18 +38,24 @@ function WritingPage() {
       setStoryImage(null)
       notify()
       localStorage.setItem('posts', JSON.stringify(userPost))
+      axios.post("http://localhost:3000/post/", {postArray})
+      .then((response)=>console.log(response))
+      .then((err)=>console.log(err))
     }
   }
+  console.log(postArray)
   useEffect(()=>{
     const savedPosts = localStorage.getItem('posts')
     // console.log(JSON.parse(savedPosts))
   })
   const [storyImage, setStoryImage] = useState(null)
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const imageFile = URL.createObjectURL(file)
     setStoryImage(imageFile)
   };
+
   const hanldeAddImage = () => {
     // Trigger click event on the hidden file input element
     if (fileInputRef.current) {

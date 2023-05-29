@@ -46,7 +46,7 @@ const ReadPostPage = ({postArray}) => {
             if(value.id === postId){
               return(
                 <div key={value.id} className='flex flex-col '>
-                  <h2 className='font-semibold text-2xl'>{value.title}</h2>
+                  <h2 className='font-semibold text-2xl md:text-4xl'>{value.title}</h2>
                   <p><Avatar src={value.userAvatar} size='xs'/>
                     <span className='text-xs ml-1'>{value.author}</span></p>
                   <div className='flex flex-col items-center'>
@@ -125,7 +125,7 @@ const ReadPostPage = ({postArray}) => {
       </div>
       <div className='mt-2 p-2'>
         <p className='text-gray-600'>Check related posts</p>
-        <Posts postArray={postArray}/>
+        <Posts postArray={postArray} />
       </div>
     </div>
   )
