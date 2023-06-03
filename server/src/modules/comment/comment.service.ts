@@ -1,16 +1,12 @@
-import {
-  Injectable,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PostService } from '../post/post.service';
 import { UserService } from '../user/user.service';
-import { CommentI } from './interface/comment.interface';
+import { IComment } from './interface/comment.interface';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -24,7 +20,7 @@ export class CommentService {
     userId: string,
     postId: string,
     createCommentDto: CreateCommentDto,
-  ): Promise<CommentI> {
+  ): Promise<IComment> {
     const user = await this.userService.findById(userId);
     const post = await this.postService.getPostById(postId);
     const comment = new Comment();
@@ -52,15 +48,66 @@ export class CommentService {
     return comments;
   }
 
-  getOne(id: number) {
-    return `This action returns a #${id} category`;
+  async getOneComment(id: string): Promise<Comment> {
+    const comment = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .leftJoinAndSelect('comment.post', 'post')
+      .where(`comment.id  = :id`, { id })
+      .getOne();
+    if (!comment) {
+      throw new HttpException('Comment does not exit', HttpStatus.BAD_REQUEST);
+    }
+
+    return comment;
   }
 
-  update(id: number) {
-    return `This action updates a #${id} category`;
+  async updateComment(
+    commentId: string,
+    userId: string,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: ['user'],
+    });
+    if (comment.user.id !== userId) {
+      throw new HttpException(
+        'user with comment does not exist',
+        HttpStatus.NOT_ACCEPTABLE,
+      );
+    }
+
+    if (!comment) {
+      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
+    }
+    const commentToUpdate = { ...comment, ...updateCommentDto };
+    const updatedComment = await this.commentRepository.save(commentToUpdate);
+    delete updatedComment.user;
+    return updatedComment;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string, userId: string): Promise<string> {
+    const comment = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where(`comment.id  = :id`, { id })
+      .getOne();
+    if (
+      !comment.user.id ||
+      comment.user.id === null ||
+      comment.user.id !== userId
+    ) {
+      throw new HttpException(
+        'user with comment does not exit',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (comment === null || !comment) {
+      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
+    }
+    await this.commentRepository.delete(id);
+    return `This comment has been deleted successfully`;
   }
 }
