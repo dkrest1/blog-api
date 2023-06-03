@@ -1,4 +1,4 @@
-export interface CommentI {
+export interface IComment {
   username: string;
   user_image: Buffer;
   email: string;
