@@ -14,10 +14,17 @@ import { Comment } from './modules/comment/entities/comment.entity';
 import { CommentModule } from './modules/comment/comment.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { OtpModule } from './modules/otp/otp.module';
+import { MulterModule } from '@nestjs/platform-express';
 import { join } from 'path';
+import { memoryStorage } from 'multer';
+import { Otp } from './modules/otp/entities/otp.entity';
 
 @Module({
   imports: [
+    MulterModule.register({
+      storage: memoryStorage(),
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..'),
     }),
@@ -33,7 +40,7 @@ import { join } from 'path';
           username: configService.get<string>('database.username'),
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.db'),
-          entities: [User, Post, Comment, Category],
+          entities: [User, Post, Comment, Category, Otp],
           synchronize: true,
           logging: false,
         };
@@ -46,6 +53,7 @@ import { join } from 'path';
     CommentModule,
     CategoryModule,
     UploadsModule,
+    OtpModule,
   ],
 })
 export class AppModule {}
