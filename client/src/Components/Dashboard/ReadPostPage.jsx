@@ -68,8 +68,6 @@ const ReadPostPage = ({postArray}) => {
   useEffect(()=>{
     axios.get(`http://localhost:3000/comment`, {headers})
     .then(function(response){
-      // console.log(response)
-      // console.log(response.data)
       let data = response.data
       const filteredComment = data.filter((value)=>value.post.id === postId  
     )
