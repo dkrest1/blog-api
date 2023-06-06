@@ -9,12 +9,16 @@ import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import ProfileDrawer from './Drawer'
 import { userDetails } from './redux/UserSlice'
+import { token } from './redux/AccessTokenSlice'
+import { user } from './redux/UserDataSlice'
 
 
  
  const Navbar =(selectedFile)=> {
     
-    const userdetails = useSelector(userDetails)
+    const userData = useSelector(user)
+    const accessToken = useSelector(token)
+    // const userdetails = useSelector(userDetails)
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu =()=>setIsOpen(false)
@@ -24,7 +28,7 @@ import { userDetails } from './redux/UserSlice'
         // setIsOpen(false)
         closeMenu()
     })
-
+    // console.log(accessToken)
     
   return (
     <div>
@@ -61,16 +65,16 @@ import { userDetails } from './redux/UserSlice'
                                 >
                                 Home
                                 </NavLink>
-                                {!userdetails.name ?
+                                {!accessToken ?
                                 <>
-                                <NavLink to ="/login"
-                                className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
-                                Login
-                                </NavLink>
-                                <NavLink to ="/sign-up"
-                                className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
-                                Sign up
-                                </NavLink> 
+                                    <NavLink to ="/login"
+                                    className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
+                                    Login
+                                    </NavLink>
+                                    <NavLink to ="/sign-up"
+                                    className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"}>
+                                    Sign up
+                                    </NavLink> 
                                 </>
                                 : 
                                 <>
@@ -101,7 +105,7 @@ import { userDetails } from './redux/UserSlice'
                         </NavLink> */}
                     </div>
                     <div>
-                        <ProfileDrawer selectedFile={selectedFile} initialState/>
+                        <ProfileDrawer selectedFile={selectedFile} accessToken={accessToken} userData={userData}/>
                     </div>
                 </div>
             </div>
@@ -122,22 +126,24 @@ import { userDetails } from './redux/UserSlice'
                             className=" text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Home
                         </Link>
-                        {userdetails.name && (
+                        {accessToken && (
                         <Link to="/dashboard"
                             className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
                             Dashboard
                         </Link>
                          )} 
-                        {!userdetails.name &&(<>
-                        <Link to="#"
-                            className="text-gray-900 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
-                            Login
-                        </Link>
-                        <Link to="#"
-                            className="text-gray-900 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
-                            Sign up
-                        </Link>
-                        </>)}
+                        {!accessToken &&(
+                        <>
+                            <Link to="/login"
+                                className="text-gray-900 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
+                                Login
+                            </Link>
+                            <Link to="/sign-up"
+                                className="text-gray-900 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={closeMenu}>
+                                Sign up
+                            </Link>
+                        </>
+                        )}
                     </div>
                 </nav>
         </nav>
