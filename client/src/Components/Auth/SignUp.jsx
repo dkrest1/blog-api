@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLessThan } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const BackButton = ()=>{
   const navigate = useNavigate()
@@ -37,9 +38,27 @@ const SignUpForm = () => {
     event.preventDefault();
     const validationErrors = validateForm(formValues);
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Valid form data:", formValues);
-      alert("sign up successful")
-      openModal()
+      axios.post("http://localhost:3000/user/create", 
+        {
+          email: formValues.email.toString(),
+          firstname: formValues.firstName.toString(),
+          lastname: formValues.lastName.toString(),
+          password: formValues.confirmPassword.toString(),
+
+        })
+        .then(function (response) {
+          console.log(response);
+          if (response.status === 201 ){
+            alert("sign up successful")
+            openModal()
+          }
+          console.log(response.status)
+        })
+        .catch(function(error){
+          console.log(error)
+        })
+      // console.log("Valid form data:", formValues);
+      // 
       
     } else {
       setErrors(validationErrors);
