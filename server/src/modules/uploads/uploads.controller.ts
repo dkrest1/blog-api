@@ -3,30 +3,21 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
-  ParseFilePipe,
 } from '@nestjs/common';
 import { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UploadsService } from './uploads.service';
-
+import { ImagePipe } from '../common/validators/image-pipe.pipe';
+import * as path from 'path';
 @Controller('upload')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  @Post('me')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'public/profiles',
-        filename: (req, file, cb) => {
-          cb(null, file.originalname);
-        },
-      }),
-    }),
-  )
+  @Post('avatar')
+  @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new ImagePipe()) file: Express.Multer.File,
   ): Promise<any> {
     return {
       statusCode: 200,
