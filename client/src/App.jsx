@@ -12,13 +12,11 @@ import Navbar from './Components/Navbar';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAllPosts } from './Components/redux/PostsSlice';
 import ReadPostPage from './Components/Dashboard/ReadPostPage';
-import WritePost from './Components/Dashboard/WritePost';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { token } from './Components/redux/AccessTokenSlice';
 import { user } from './Components/redux/UserDataSlice';
 import { getUser } from './Components/redux/UserDataSlice';
-import UseGet from './Components/UseGet';
 
 
 
