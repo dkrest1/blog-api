@@ -11,7 +11,7 @@ import Posts from "./Posts";
 
 
 
-export default function Profiles() {
+export default function Profiles({accessToken}) {
   const userdetails = useSelector(userDetails)
   const postArray = useSelector(selectAllPosts)
   // console.log(postArray)
@@ -22,7 +22,7 @@ export default function Profiles() {
       value: "my posts",
       icon: PencilSquareIcon,
       desc: userdetails.role ==='subscriber' ? <Subscriber /> : 
-      <UserPost postArray={postArray}
+      <UserPost accessToken={accessToken}
       />,
     },
     {

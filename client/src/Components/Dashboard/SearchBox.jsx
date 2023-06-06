@@ -19,8 +19,9 @@ const SearchBox = ({filtered}) => {
             onChange={handleInputChange}
             />
         </form> */}
-      { filtered.length > 0 &&
-      <Posts postArray={filtered}/>}
+      {/* { filtered.length > 0 && */}
+      <Posts postFetched={filtered}/>
+      {/* } */}
     </div>
   )
 }

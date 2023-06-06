@@ -1,25 +1,39 @@
 import React, { useState, useRef, useEffect } from "react";
 import {useClickAway} from 'react-use'
-import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { Login } from "../Auth/Login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
 import Posts from "./Posts";
 import AvatarUploader from "./ProfilePic";
 import { userDetails } from "../redux/UserSlice";
-import { selectAllPosts } from "../redux/PostsSlice";
+import { selectAllPosts} from "../redux/PostsSlice";
+import { user } from "../redux/UserDataSlice";
+import { token } from "../redux/AccessTokenSlice";
+import { getPosts } from "../redux/PostSlice";
+import { post } from "../redux/PostSlice";
 import FloatingButton from "./FloatingButton";
 import axios from 'axios'
-import WritePost from "./WritePost";
 import SearchBox from "./SearchBox";
+import UseGet from "../UseGet";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Dashboard() {
   const userdetails = useSelector(userDetails)
-  const postArray = useSelector(selectAllPosts)
-  // console.log(postArray)
+  const accessToken = useSelector(token)
+  const postFetched = useSelector(post)
+  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState(false);
-  
+
+  const {fetchedPosts, isPending, setIsPending} = UseGet("http://localhost:3000/post?page=1", accessToken)
+  useEffect(()=>{
+      fetchedPosts &&(
+      dispatch(getPosts(fetchedPosts)),
+      setIsPending(false)
+      )
+  },[fetchedPosts])
+
   const ref = useRef(null);
   useClickAway(ref,()=>{
     setIsOpen(false);
@@ -28,24 +42,45 @@ export default function Dashboard() {
 
   const [searchItem, setsearchItem] = useState('')
   const [filtered, setFiltered] = useState([])
+  const [searchError, setSearchError] = useState('')
+  const notify = ()=>toast(searchError)
 
   const handleInputChange =(event)=>{
       setsearchItem(event.target.value)
+      // console.log(searchItem)
   }
   const handleSearchSubmit =(event)=>{
-      event.preventDefault()
+    event.preventDefault()
+    if(searchItem===''){
+      setFiltered([])
+    } else if(filteredItem.length < 1 ){
+      setSearchError("No matched post")
+      notify()
+    }
+    else{
       setFiltered(filteredItem)
+    }
   }
-  const filteredItem = postArray.filter((obj)=>{
-    return obj.title.toLowerCase().includes(searchItem.toLowerCase()) || obj.content.toLowerCase().includes(searchItem.toLowerCase()) || obj.author.toLowerCase().includes(searchItem.toLowerCase())
+  let filteredItem
+  if (searchItem){
+  filteredItem = postFetched.filter((obj)=>{
+    let searched = obj.title.toLowerCase().includes(searchItem.toLowerCase()) || obj.content.toLowerCase().includes(searchItem.toLowerCase()) || obj.user.firstname.toLowerCase().includes(searchItem.toLowerCase()) || obj.user.lastname.toLowerCase().includes(searchItem.toLowerCase())
+    return(searched)
 })
- 
+// console.log(filteredItem)
+  }
+  // console.log(filtered)
+  const navigateTo = useNavigate()
+  const gotoLogin =()=>navigateTo('/login')
+  
   return (
-    <div className="bg-gray-200 min-h-screen">
-      {userdetails.name ? 
+    <div className="bg-gray-200 min-h-screen md:w-full">
+      {accessToken ? 
       <>
-        <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
-          <div className="flex justify-between bg-white shadow-md rounded-lg px-4 py-3">
+        <main className="max-w-7xl mx-auto md:max-w-full md:mx-0 py-2 md:px-2 ">
+          <ToastContainer/>
+          <div className="md:w-full md:flex md:flex-col md:items-center">
+          <div className="flex justify-between bg-white shadow-md rounded-lg px-4 py-3 md:w-[80%]">
             <p className="text-gray-700 md:text-2xl">Latest Posts</p>
             <div>
               {/* <SearchBox/> */}
@@ -66,14 +101,19 @@ export default function Dashboard() {
               </NavLink>
             </div>
           </div>
-          { filtered.length > 0 ?
-            <SearchBox filtered={filtered} /> :
-          <Posts postArray={postArray}/> }
+          </div>
+          <div className="w-screen md:w-full md:px-1">
+            { filtered.length > 0 ?
+              <SearchBox filtered={filtered} /> :
+              
+            <Posts postFetched={postFetched} isPending={isPending}/> 
+            }
+          </div>
           <div className="border-2 h-12 md:hidden">
             <FloatingButton/>
           </div>
         </main>
-      </> : <Login/>}
+      </> : gotoLogin()}
     </div>
     
   )}
