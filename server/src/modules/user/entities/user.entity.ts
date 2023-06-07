@@ -53,9 +53,6 @@ export class User {
   @Column({ nullable: true })
   authToken: string;
 
-  @Column({ nullable: true })
-  otp: string;
-
   @CreateDateColumn()
   created_at: Date;
 

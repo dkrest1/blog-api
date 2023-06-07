@@ -16,7 +16,6 @@ import {
 import { ApiBody, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard.guard';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserrole } from './dto/update-user-role.dto';
@@ -29,23 +28,23 @@ import { Role } from '../common/enum/role.enum';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @ApiBody({ type: [CreateUserDto] })
-  @ApiResponse({
-    status: 201,
-    description: 'The User has been successfully created.',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    // check if email exist
-    const emailExist = await this.userService.findByEmail(createUserDto.email);
-    if (emailExist) {
-      throw new UnprocessableEntityException('User already exist');
-    }
+  // @Post('create')
+  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  // @ApiBody({ type: [CreateUserDto] })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'The User has been successfully created.',
+  // })
+  // @ApiResponse({ status: 400, description: 'Bad Request.' })
+  // async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  //   // check if email exist
+  //   const emailExist = await this.userService.findByEmail(createUserDto.email);
+  //   if (emailExist) {
+  //     throw new UnprocessableEntityException('User already exist');
+  //   }
 
-    return await this.userService.create(createUserDto);
-  }
+  //   return await this.userService.create(createUserDto);
+  // }
 
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
@@ -98,10 +97,9 @@ export class UserController {
     @Query('limit') limit = 10,
   ): Promise<User[]> {
     const users = await this.userService.findUsers(page, limit);
-    users.forEach((user) => {
+    users.map((user) => {
       delete user.password;
       delete user.authToken;
-      delete user.otp;
     });
     return users;
   }

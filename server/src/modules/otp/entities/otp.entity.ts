@@ -15,10 +15,10 @@ export class Otp {
   userEmail: string;
 
   @Column()
-  otp: number;
+  otp: string;
 
   @Column({ type: 'timestamp' })
-  expiry: string;
+  expiry: Date;
 
   @CreateDateColumn()
   created_at: Date;
