@@ -130,8 +130,9 @@ const ReadPostPage = ({postArray}) => {
       setShowComment(true)
       setEditComment(commentList.find((comment)=>comment.id===commentId))
     }
-    const handleUpdateComment = (commentId)=>{
-      axios.patch(`http://localhost:3000/${commentId}`, {headers})
+    const handleUpdateComment = ()=>{
+      let commentId
+      axios.patch(`http://localhost:3000/${commentId}`, comments, {headers})
       .then(function(response){
         console.log(response)
       })
@@ -193,7 +194,10 @@ const ReadPostPage = ({postArray}) => {
                       value={comments.comment}
                       onChange={()=>onInputChange(event)}
                     />
-                    <button onClick={handleSubmitComment} className='bg-blue-400 p-2 m-2 text-sm'>Post Comment</button>
+                    {editComment ?
+                      <button className='bg-blue-400 p-2 m-2 text-sm' onClick={()=>handleUpdateComment()}>Update Comment</button> :
+                      <button onClick={handleSubmitComment} className='bg-blue-400 p-2 m-2 text-sm'>Post Comment</button>
+                    }
                   </div>
                   <div className='mt-3'>
                     
@@ -222,10 +226,8 @@ const ReadPostPage = ({postArray}) => {
                                         <div className=' flex flex-col z-20 items-start space-y-3'>
                                             { userData.email === obj.user.email ? 
                                               <>
-                                                {editComment ?
-                                                <button onClick={()=>handleUpdateComment(obj.id)}>Update Comment</button> :
                                                 <button onClick={()=>handleEditComment(obj.id)}>Edit Comment</button>
-                                                }
+                                                
                                                 <button onClick={()=>handleDeleteComment(obj.id)}>Delete Comment</button>
                                               </>
                                               :
