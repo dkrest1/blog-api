@@ -35,7 +35,7 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateUserDto> {
     const user = await this.findById(id);
-    if (!user) {
+    if (!user || user === null) {
       throw new NotFoundException();
     }
     const hashedPassword = await hashPassword(updateUserDto.password);
@@ -52,7 +52,7 @@ export class UserService {
 
   async updateUserRole(email: string, role: Role): Promise<User> {
     const user = await this.findByEmail(email);
-    if (!user) {
+    if (!user || user === null) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
 
@@ -95,7 +95,7 @@ export class UserService {
   async remove(id: string): Promise<string> {
     const user = await this.findById(id);
 
-    if (!user) {
+    if (!user || user === null) {
       throw new NotFoundException();
     }
     await this.userRepository.delete(id);

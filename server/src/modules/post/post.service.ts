@@ -45,7 +45,12 @@ export class PostService {
       .leftJoinAndSelect('post.user', 'user')
       .where(`post.id = :postId`, { postId })
       .getOne();
+
     try {
+      if (!post || post === null || !post.slug) {
+        throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
+      }
+
       if (post.user.id !== userId) {
         throw new HttpException(
           'user with post does not exist',
@@ -53,9 +58,6 @@ export class PostService {
         );
       }
 
-      if (!post || !post.slug) {
-        throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
-      }
       const slug = await this.createUniqueSlug(
         updatePostDto.title,
         post.user.id,
@@ -83,7 +85,7 @@ export class PostService {
 
   async getPostById(id: string): Promise<Post> {
     const post = await this.postRepository.findOneBy({ id });
-    if (!post) {
+    if (!post || post === null) {
       throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
     }
     return post;
@@ -118,6 +120,13 @@ export class PostService {
       .where(`post.id  = :postId`, { postId })
       .getOne();
 
+    if (!user || user === null || !post || post === null) {
+      throw new HttpException(
+        'user or post does not exist',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const userLikedPost = post.likes.find((user) => user.id === userId);
 
     //check if user available in the likes if not push in the userid
@@ -136,6 +145,10 @@ export class PostService {
       .leftJoinAndSelect('post.likes', 'likes')
       .where(`post.id  = :postId`, { postId })
       .getOne();
+
+    if (!post || post === null) {
+      throw new HttpException('post does not exist', HttpStatus.NOT_FOUND);
+    }
 
     const userLikedPost = post.likes.find((user) => user.id === userId);
     //check if user available in the likes if not push in the userid
