@@ -40,10 +40,11 @@ export class PostService {
     postId: string,
     updatePostDto: UpdatePostDto,
   ): Promise<UpdatePostDto> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-      relations: ['user'],
-    });
+    const post = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .where(`post.id = :postId`, { postId })
+      .getOne();
     try {
       if (post.user.id !== userId) {
         throw new HttpException(

@@ -67,10 +67,11 @@ export class CommentService {
     userId: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment> {
-    const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
-      relations: ['user'],
-    });
+    const comment = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where(`comment.id = :commentId`, { commentId })
+      .getOne();
     if (comment.user.id !== userId) {
       throw new HttpException(
         'user with comment does not exist',
