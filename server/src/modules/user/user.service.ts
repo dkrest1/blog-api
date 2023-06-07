@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { hashPassword } from '../common/utils.';
 import { Role } from '../common/enum/role.enum';
+import { UpdateUserSensitive } from './dto/update-user-sensitive.dto';
 
 @Injectable()
 export class UserService {
@@ -50,6 +51,30 @@ export class UserService {
     return updatedUser;
   }
 
+  async updateUserSensitive(
+    userId: string,
+    updateUserSensitive: UpdateUserSensitive,
+  ): Promise<UpdateUserSensitive> {
+    const user = await this.findById(userId);
+    if (!user || user === null) {
+      throw new NotFoundException();
+    }
+
+    if (user) {
+      if (updateUserSensitive.active) {
+        user.active = updateUserSensitive.active;
+      }
+      if (updateUserSensitive.authToken) {
+        user.authToken = updateUserSensitive.authToken;
+      }
+    }
+
+    const updatedUser = await this.userRepository.save({
+      ...user,
+    });
+    return updatedUser;
+  }
+
   async updateUserRole(email: string, role: Role): Promise<User> {
     const user = await this.findByEmail(email);
     if (!user || user === null) {
@@ -67,8 +92,6 @@ export class UserService {
 
     const updatedUser = await this.userRepository.save(userToUpdate);
     delete updatedUser.password;
-    delete updatedUser.otp;
-    delete updatedUser.authToken;
     return updatedUser;
   }
 
