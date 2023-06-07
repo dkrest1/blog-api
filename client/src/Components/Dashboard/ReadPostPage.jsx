@@ -38,6 +38,7 @@ const ReadPostPage = ({postArray}) => {
   })
   const [commentsCount, setCommentcount] = useState(null)
   const [editComment, setEditComment] = useState(null)
+  const [commentID, setCommentID] = useState('')
 
 
   const onInputChange =(event)=>{
@@ -52,6 +53,7 @@ const ReadPostPage = ({postArray}) => {
     setBookmarkState(!bookmarkState)
   }
   const handleCommentClick =()=>{
+    setEditComment(null)
     setShowComment(!showComment)
   }
 
@@ -65,6 +67,7 @@ const ReadPostPage = ({postArray}) => {
       navigateTo('/login')
     }
   })
+  //fetches all the comments
   useEffect(()=>{
     axios.get(`http://localhost:3000/comment`, {headers})
     .then(function(response){
@@ -78,6 +81,7 @@ const ReadPostPage = ({postArray}) => {
     })
   },)
   // console.log(commentList)
+
   const handleSubmitComment =(event)=>{
     event.preventDefault()
     if(!comments.comment){
@@ -103,9 +107,9 @@ const ReadPostPage = ({postArray}) => {
     const handleDeleteComment=(commentId)=>{
       console.log(commentId)
       console.log(commentList)
-      const headers={
-        Authorization : `Bearers ${accessToken}`
-      }
+      // const headers={
+      //   Authorization : `Bearers ${accessToken}`
+      // }
       axios.delete(`http://localhost:3000/comment/${commentId}`, {headers})
       .then(function(response){
         console.log(response)
@@ -125,14 +129,17 @@ const ReadPostPage = ({postArray}) => {
       }
     },[setComments, editComment])
 
+
     const handleEditComment=(commentId)=>{
-      console.log(commentId)
+      // console.log(commentId)
+      setCommentID(commentId)
       setShowComment(true)
       setEditComment(commentList.find((comment)=>comment.id===commentId))
+      // return getComment
     }
     const handleUpdateComment = ()=>{
-      let commentId
-      axios.patch(`http://localhost:3000/${commentId}`, comments, {headers})
+      console.log(commentID)
+      axios.patch(`http://localhost:3000/comment/${commentID}`, comments, {headers})
       .then(function(response){
         console.log(response)
       })
@@ -140,6 +147,7 @@ const ReadPostPage = ({postArray}) => {
         console.log(error)
       })
     }
+    
   // console.log(typeof(commentList))
  
   const DisplayPost =()=>{
