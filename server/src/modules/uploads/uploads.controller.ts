@@ -1,55 +1,70 @@
 import {
+  BadRequestException,
   Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
   Post,
+  Req,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { UploadsService } from './uploads.service';
-import { ImagePipe } from '../common/validators/image-pipe.pipe';
-import * as path from 'path';
-@Controller('upload')
+import { ImageUploadService } from './uploads.service';
+import { Request, Response } from 'express';
+import slugify from 'slugify';
+import * as fs from 'fs';
+
+@Controller('uploads')
 export class UploadsController {
-  constructor(private readonly uploadsService: UploadsService) {}
+  constructor(private readonly imageUploadService: ImageUploadService) {}
 
-  @Post('avatar')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadProfilePicture(
-    @UploadedFile(new ImagePipe()) file: Express.Multer.File,
+  @Post('me/avatar')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @UploadedFile() file,
+    @Req() req: Request,
+  ): Promise<string | Error> {
+    // You can change the approach of getting the user id here
+    const { userId } = req.body;
+    if (!userId) throw new BadRequestException('Invalid UserID');
+    const folder = `users/${slugify(userId)}/avatar`;
+    try {
+      const imagePath = await this.imageUploadService.uploadImage(file, folder);
+      return imagePath;
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
+  @Get('me/avatar')
+  async getImage(@Req() req: Request, @Res() response: Response): Promise<any> {
+    const { imagePath } = req.body;
+    await this.imageUploadService.getImage(
+      // to be able to view on browser too, an option for client-side
+      imagePath || req.query.imagePath,
+      response,
+    );
+  }
+
+  @Delete('me/avatar')
+  async deleteImage(
+    @Req() req: Request,
+    @Res() response: Response,
   ): Promise<any> {
-    return {
-      statusCode: 200,
-      data: file.path,
-    };
-  }
-
-  async getProfilePicture(): Promise<any> {
-    return;
-  }
-
-  async updateProfilePicture(): Promise<any> {
-    return;
-  }
-
-  async deleteProfilePicture(): Promise<any> {
-    return;
-  }
-
-  async uploadPostPicture(): Promise<any> {
-    return;
-  }
-
-  async getPostPicture(): Promise<any> {
-    return;
-  }
-
-  async updatePostPicture(): Promise<any> {
-    return;
-  }
-
-  async deletePostPicture(): Promise<any> {
-    return;
+    const { imagePath } = req.body;
+    await this.imageUploadService
+      .deleteImage(imagePath)
+      .then(() => {
+        return { message: 'Image deleted successfully' };
+      })
+      .catch((error) => {
+        if (error instanceof NotFoundException) {
+          throw new NotFoundException('Image not found');
+        }
+        console.log({ errorDeletingImage: error });
+        throw error;
+      });
   }
 }
