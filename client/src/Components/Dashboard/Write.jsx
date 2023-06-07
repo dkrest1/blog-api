@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { allUserPosts } from "../redux/UserPostSlice";
-import { postAdded } from "../redux/UserPostSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Typography } from "@material-tailwind/react";
@@ -15,40 +14,61 @@ import { selectAllPosts } from "../redux/PostsSlice";
 import Posts from "./Posts";
 import { PhotoIcon, } from "@heroicons/react/24/outline";
 import { addPost } from "../redux/PostsSlice";
+import axios from "axios";
+import { nanoid } from "@reduxjs/toolkit";
+import { post } from "../redux/PostSlice";
 
-function WritingPage() {
+function WritingPage({accessToken}) {
   const userPost = useSelector(allUserPosts)
+  const fetchedPost = useSelector(post)
+  // console.log(postFetched)
   const dispatch = useDispatch()
   const userdetails = useSelector(userDetails)
   const postArray= useSelector(selectAllPosts)
     const navigateTo = useNavigate();
-    const [postTitle, setPostTitle] =useState('')
-    const [postContent, setPostContent] =useState('')
+    const [postValues, setPostValues] = useState({
+      id: nanoid(),
+      title: '',
+      content: '',
+      published: false
+    })
 
-    const notify =()=> toast('Published successfuly')
+    const handleInputChange =(event)=>{
+      const {name, value} = event.target
+      setPostValues((prevValues)=>({...prevValues, [name]: value}))
+    }
+
+  const notify =()=> toast('Published successfuly')
+
   const onPublishPost =(event)=>{
     event.preventDefault()
-    if(postTitle && postContent){
-      dispatch(
-        addPost(userdetails.profilePic, postTitle, userdetails.name, storyImage, postContent)
-      )
-      setPostTitle('')
-      setPostContent('')
-      setStoryImage(null)
-      notify()
-      localStorage.setItem('posts', JSON.stringify(userPost))
-    }
+    if(!postValues.title && !postValues.content){
+      console.log('Title or Content cannot be empty!')
+      }else{
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        'content-type': 'application/json',
+      } 
+      axios.post("http://localhost:3000/post/create", postValues, {headers})
+      .then((response)=>{
+        console.log(response)
+        if(response.status===201){
+          notify()
+          setPostValues({title:'', content:''})
+        }
+      })
+      .catch((err)=>console.log(err))
   }
-  useEffect(()=>{
-    const savedPosts = localStorage.getItem('posts')
-    // console.log(JSON.parse(savedPosts))
-  })
+}
+  
   const [storyImage, setStoryImage] = useState(null)
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const imageFile = URL.createObjectURL(file)
     setStoryImage(imageFile)
   };
+
   const hanldeAddImage = () => {
     // Trigger click event on the hidden file input element
     if (fileInputRef.current) {
@@ -59,9 +79,19 @@ function WritingPage() {
     setStoryImage(null)
   }
   const fileInputRef = React.createRef();
+  useEffect(()=>{
+    if(!accessToken){
+      const gotoLogin =()=>{
+        navigateTo('/login')
+      }
+    gotoLogin()
+    }
+  })
+  
 
   return (
     <div className="flex flex-col h-screen">
+      
       { userdetails.role ==='subscriber' ? 
         <Subscriber/>
       :
@@ -92,8 +122,8 @@ function WritingPage() {
                 <input
                   type="text"
                   name="title"
-                  value={postTitle}
-                  onChange={(e)=>setPostTitle(e.target.value)}
+                  value={postValues.title}
+                  onChange={handleInputChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -106,8 +136,9 @@ function WritingPage() {
                 </label>
                 <div>
                   <textarea className="w-full h-32 border-b-2"
-                    value={postContent}
-                    onChange={(e)=>setPostContent(e.target.value)}
+                  name='content'
+                    value={postValues.content}
+                    onChange={handleInputChange}
                   />
                 </div>
                 <button onClick={hanldeAddImage} className="flex flex-row gap-2"><span>Add Photos</span>
@@ -131,9 +162,10 @@ function WritingPage() {
           </div>
         </div>
         <div>
-          <Typography variant='h5'>Your Recent Posts</Typography>
+          <Typography variant='h5'>Check Recent Posts</Typography>
         {/* <UserPost postArray={postArray} /> */}
-        <Posts postArray={postArray.filter((post)=>post.author===userdetails.name)}/>
+        {/* <Posts postArray={postArray.filter((post)=>post.author===userdetails.name)}/> */}
+        <Posts postFetched={fetchedPost} isPending={false} />
         </div>
       </div>
 }

@@ -9,14 +9,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-tailwind/react';
-import { userDetails } from './redux/UserSlice';
+import { user } from './redux/UserDataSlice';
+import { token } from './redux/AccessTokenSlice';
 const Home =()=> {
-    const userdetails = useSelector(userDetails)
-    const handleRegister =()=>{
-    // const [selectedFile, setSelectedFile] = useState(initialState);
-
-        return
-    }
+    const accessToken = useSelector(token)
+    const userData = useSelector(user)
+    // console.log(userData)
+    // console.log(accessToken)
   return (
     <div className='flex flex-col min-h-screen' >
         <div className=' flex flex-1 flex-col items-center bg-slate-50 h-80 p-1'>
@@ -28,16 +27,16 @@ const Home =()=> {
                 <div className='flex flex-col items-center md:mt-10 '>
                     <div className=' text-center  font-serif mt-5 mb-5 mx-10 md:text-xl md:ml-2'><p className=' text-center md:text-start -mb-8 text-base  text-gray-800 md:text-3xl'>You want</p> <br/><span className='text-4xl md:text-6xl font-extrabold text-gray-900 md:text-blue-900'>lastest and Top Trending Stories</span><span className='text-xl md:text-3xl text-gray-800'> in and outside the tech space?</span>
                     </div>
-                    {!userdetails.name ?
-                    <div className='flex flex-col items-center md:rounded md:px-8 md:py-6 md:border md:border-blue-100 md:mt-4'> 
-                    <p className='text-slate-600 text-sm mb-2 md:text-4xl md:text- '>Register / Login to start creating your stories</p>
-                    <div className='md:flex md:flex-row md:mt-3 md:gap-3'>
-                        <Link to='/sign-up'><button className=' bg-blue-600 text-white hover:ring-2 hover:ring-blue-600 hover:bg-white hover:text-blue-600 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8'
-                        >Register</button></Link>
-                        <Link to='/login'><button className='bg-blue-600 text-white hover:ring-2 hover:ring-blue-600 hover:bg-white hover:text-blue-600 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8 '
-                        >Login</button></Link>
-                    </div>  
-                    </div>
+                    {!accessToken ?
+                        <div className='flex flex-col items-center md:rounded md:px-8 md:py-6 md:border md:border-blue-100 md:mt-4'> 
+                            <p className='text-slate-600 text-sm mb-2 md:text-4xl md:text- '>Register / Login to start creating your stories</p>
+                            <div className='md:flex md:flex-row md:mt-3 md:gap-3'>
+                                <Link to='/sign-up'><button className=' bg-blue-600 text-white hover:ring-2 hover:ring-blue-600 hover:bg-white hover:text-blue-600 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8'
+                                >Register</button></Link>
+                                <Link to='/login'><button className='bg-blue-600 text-white hover:ring-2 hover:ring-blue-600 hover:bg-white hover:text-blue-600 font-semibold rounded-md px-4 py-1 mr-5 md:text-lg md:ml-6 md:px-8 '
+                                >Login</button></Link>
+                            </div>  
+                        </div>
                     :
                     <>
                         <div className='flex flex-col items-center bg-gray-50 mx-7 p-4 border2 rounded-lg md:mt-8 md:gap-3'>
