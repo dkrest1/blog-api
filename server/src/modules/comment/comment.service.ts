@@ -55,7 +55,7 @@ export class CommentService {
       .leftJoinAndSelect('comment.post', 'post')
       .where(`comment.id  = :id`, { id })
       .getOne();
-    if (!comment) {
+    if (!comment || comment === null) {
       throw new HttpException('Comment does not exit', HttpStatus.BAD_REQUEST);
     }
 
@@ -72,16 +72,18 @@ export class CommentService {
       .leftJoinAndSelect('comment.user', 'user')
       .where(`comment.id = :commentId`, { commentId })
       .getOne();
-    if (comment.user.id !== userId) {
+
+    if (!comment || comment === null) {
+      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    if (comment.user.id !== userId || comment.user === null) {
       throw new HttpException(
         'user with comment does not exist',
         HttpStatus.NOT_ACCEPTABLE,
       );
     }
 
-    if (!comment) {
-      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
-    }
     const commentToUpdate = { ...comment, ...updateCommentDto };
     const updatedComment = await this.commentRepository.save(commentToUpdate);
     delete updatedComment.user;
@@ -94,7 +96,14 @@ export class CommentService {
       .leftJoinAndSelect('comment.user', 'user')
       .where(`comment.id  = :id`, { id })
       .getOne();
+
+    if (!comment || comment === null) {
+      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
+    }
+
     if (
+      !comment.user ||
+      comment.user === null ||
       !comment.user.id ||
       comment.user.id === null ||
       comment.user.id !== userId
@@ -105,9 +114,6 @@ export class CommentService {
       );
     }
 
-    if (comment === null || !comment) {
-      throw new HttpException('comment does not exist', HttpStatus.NOT_FOUND);
-    }
     await this.commentRepository.delete(id);
     return `This comment has been deleted successfully`;
   }
