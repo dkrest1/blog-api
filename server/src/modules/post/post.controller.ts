@@ -88,7 +88,6 @@ export class PostController {
     return await this.postService.getPostsByUserId(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'Get all posts.',
