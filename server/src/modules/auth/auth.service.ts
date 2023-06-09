@@ -3,12 +3,11 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
-import { comparePassword } from '../common/utils.';
+import { comparePassword, hashPassword } from '../common/utils.';
 import { OtpService } from '../otp/otp.service';
 import {
   INormalResponse,
@@ -17,6 +16,8 @@ import {
 import { VerifyUserDataDto } from './dto/verifyUserData.dto';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { PasswordResetDto } from './dto/password-reset.dto';
+import { ResendCodeDto } from './dto/resend-code.dto';
 
 @Injectable()
 export class AuthService {
@@ -81,14 +82,17 @@ export class AuthService {
   ): Promise<INormalResponse> {
     const user = await this.userService.findByEmail(verifyUserData.userEmail);
     if (!user || user === null) {
-      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+      return {
+        message: 'user not found',
+        status: HttpStatus.NOT_FOUND,
+      };
     }
 
     if (user.active) {
-      throw new HttpException(
-        'user is activated already',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      return {
+        message: 'user is activated already',
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+      };
     }
     try {
       const otpVerifiedResponse = await this.otpService.verifyOtp(
@@ -101,11 +105,18 @@ export class AuthService {
           status: HttpStatus.ACCEPTED,
         };
       } else if (otpVerifiedResponse.status === 404) {
-        throw new HttpException('invalid OTP', HttpStatus.NOT_FOUND);
+        return {
+          message: 'invalid OTP',
+          status: HttpStatus.NOT_FOUND,
+        };
       } else if (otpVerifiedResponse.status === 410) {
-        throw new HttpException('OTP has expired', HttpStatus.GONE);
+        return {
+          message: 'OTP has expired',
+          status: HttpStatus.GONE,
+        };
       }
     } catch (err) {
+      console.log(err);
       throw new HttpException(
         'something went wrong, please try again later',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -115,12 +126,12 @@ export class AuthService {
 
   //verify token
   async verifyTOken(token: string): Promise<User | null> {
-    const decoded = await this.jwtService.verifyAsync(token, {
-      secret: this.configService.get<string>('jWT_SECRET'),
-    });
-    const user = await this.userService.findById(decoded.sub);
-
     try {
+      const decoded = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('jWT_SECRET'),
+      });
+
+      const user = await this.userService.findById(decoded.sub);
       if (!user || user === null) {
         throw new HttpException(
           'token could not be verified',
@@ -131,17 +142,95 @@ export class AuthService {
       delete user.password;
       return user;
     } catch (err) {
-      throw new UnauthorizedException();
+      throw new HttpException('invalid token', HttpStatus.BAD_REQUEST);
     }
   }
 
   //resend otp
-  async resendOtp(email: string): Promise<INormalResponse> {
+  async resendOtp(resendCodeDto: ResendCodeDto): Promise<INormalResponse> {
+    const { email } = resendCodeDto;
     const subject = 'Account Activation';
     const otp = await this.otpService.resendOtp(email, subject);
     return {
       message: otp.message,
       status: otp.status,
+    };
+  }
+
+  async forgetPassword(resendCodeDto: ResendCodeDto): Promise<INormalResponse> {
+    const { email } = resendCodeDto;
+    const user = await this.userService.findByEmail(email);
+    if (!user || user === null) {
+      return {
+        message: 'user not found',
+        status: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    if (user.active === false) {
+      await this.otpService.resendOtp(email, 'Account Activation');
+      return {
+        message:
+          'Please check your email for OTP to activate your account before performing this action',
+        status: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    const payload = {
+      email,
+      sub: user.id,
+    };
+
+    const resetToken = await this.jwtService.signAsync(payload);
+
+    await this.userService.updateUserSensitive(user.id, {
+      authToken: resetToken,
+    });
+
+    const resetText = `Click the link to reset your password ${process.env.PASSWORD_RESET_URL_LINK}/auth/reset/password/${resetToken}`;
+
+    await this.otpService.sendToken(email, 'Password Reset', resetText);
+
+    return {
+      message: 'please check your email for your password reset link',
+      status: HttpStatus.CREATED,
+    };
+  }
+
+  async passwordReset(
+    passwordResetDto: PasswordResetDto,
+  ): Promise<INormalResponse> {
+    const { resetToken, password } = passwordResetDto;
+    const user = await this.verifyTOken(resetToken);
+
+    if (!user || user === null) {
+      return {
+        message: 'user not found',
+        status: HttpStatus.NOT_FOUND,
+      };
+    }
+    if (resetToken !== user.authToken) {
+      return {
+        message: 'invalid token',
+        status: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    if (!password) {
+      return {
+        message: 'please provide a reset password',
+        status: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    await this.userService.update(user.id, { password: hashedPassword });
+    await this.userService.updateUserSensitive(user.id, { authToken: null });
+
+    return {
+      message: 'password reset successfully',
+      status: HttpStatus.CREATED,
     };
   }
 }

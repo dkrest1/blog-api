@@ -2,10 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Otp } from './entities/otp.entity';
-import * as nodemailer from 'nodemailer';
+import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import otp from 'otp-generator';
-import { promisify } from 'util';
+import * as otp from 'otp-generator';
 import { INormalResponse } from '../common/interface/index.interface';
 import { hashPassword, comparePassword } from '../common/utils.';
 import { VerifyOtpDto } from './dto/verify-otp';
@@ -16,6 +15,7 @@ export class OtpService {
     @InjectRepository(Otp)
     private readonly otpRepository: Repository<Otp>,
     private readonly configService: ConfigService,
+    private readonly mailerService: MailerService,
   ) {}
 
   private generateOTP(): string {
@@ -23,39 +23,22 @@ export class OtpService {
       upperCaseAlphabets: true,
       specialChars: false,
     });
-
     return OTP;
   }
 
-  private readonly transport = nodemailer.createTransport({
-    host: this.configService.get<string>('MAIL_HOST'),
-    port: parseInt(this.configService.get<string>('MAIL_PORT')),
-    auth: {
-      user: this.configService.get<string>('MAIL_USERNAME'),
-      pass: this.configService.get<string>('MAIL_PASSWORD'),
-    },
-  });
-
-  private async sendOtpToEmail(email: string, subject: string, otp: string) {
+  private async sendCodeToEmail(email: string, subject: string, html: string) {
     const message = {
-      from: this.configService.get<string>('MAIL_USERNAME'),
       to: email,
+      from: this.configService.get<string>('MAIL_USERNAME'),
       subject: `Blog-API: ${subject}`,
-      html: `<p>Your OTP code is <b>${otp}</b></p>`,
+      html,
     };
 
-    //convert the code to an async code using promisify from util module and bind to objevt
-    const sendEmailAsync = promisify(
-      this.transport.sendMail.bind(this.transport),
-    );
-
     try {
-      await sendEmailAsync(message);
-      console.log('email sent successfully');
+      await this.mailerService.sendMail(message);
     } catch (err) {
-      console.log(err);
       throw new HttpException(
-        'Something went Wrong, Please try again letter',
+        'Something went Wrong, Please try again later',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -63,13 +46,26 @@ export class OtpService {
 
   async sendOtp(email: string, subject: string): Promise<INormalResponse> {
     const otp = this.generateOTP();
+    const text = `<p>Your OTP code is <b>${otp}</b>, Kindly use it to activate your account.</p>`;
     //hashed otp before saving to database
     const hashedOtp = await hashPassword(otp);
     //10mins expiry time
     const expiry = new Date(new Date().getTime() + 10 * 60 * 1000);
 
     await this.createOtp(email, hashedOtp, expiry);
-    await this.sendOtpToEmail(email, subject, otp);
+    await this.sendCodeToEmail(email, subject, text);
+    return {
+      message: 'OTP sent successfully',
+      status: HttpStatus.CREATED,
+    };
+  }
+
+  async sendToken(
+    email: string,
+    subject: string,
+    html: string,
+  ): Promise<INormalResponse> {
+    await this.sendCodeToEmail(email, subject, html);
     return {
       message: 'OTP sent successfully',
       status: HttpStatus.CREATED,
@@ -96,19 +92,26 @@ export class OtpService {
   async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<INormalResponse> {
     const otp = await this.otpRepository.findOneBy({
       userEmail: verifyOtpDto.userEmail,
-      otp: verifyOtpDto.otp,
     });
 
-    const optCode = await comparePassword(verifyOtpDto.otp, otp.otp);
-
-    if (!otp || otp === null) {
-      throw new HttpException('Invalid OTP', HttpStatus.NOT_FOUND);
-    } else if (otp.expiry <= new Date()) {
-      throw new HttpException('OTP has expired', HttpStatus.GONE);
+    if (otp === null || !otp) {
+      return {
+        message: 'OTP not found',
+        status: HttpStatus.NOT_FOUND,
+      };
     }
 
-    if (!optCode) {
-      throw new HttpException('Invalid OTP', HttpStatus.NOT_FOUND);
+    const optCode = await comparePassword(verifyOtpDto.otp, otp.otp);
+    if (otp && !optCode) {
+      return {
+        message: 'invalid otp',
+        status: HttpStatus.NOT_FOUND,
+      };
+    } else if (otp.expiry <= new Date()) {
+      return {
+        message: 'OTP has expired',
+        status: HttpStatus.NOT_FOUND,
+      };
     }
 
     await this.revokeOtp(verifyOtpDto);
@@ -117,6 +120,7 @@ export class OtpService {
       status: HttpStatus.ACCEPTED,
     };
   }
+
   async resendOtp(email: string, subject: string): Promise<INormalResponse> {
     await this.sendOtp(email, subject);
     return {

@@ -11,7 +11,6 @@ import {
   UseGuards,
   NotFoundException,
   Query,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard.guard';
@@ -22,30 +21,11 @@ import { UpdateUserrole } from './dto/update-user-role.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/role.decorator';
 import { Role } from '../common/enum/role.enum';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Post('create')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @ApiBody({ type: [CreateUserDto] })
-  @ApiResponse({
-    status: 201,
-    description: 'The User has been successfully created.',
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    // check if email exist
-    const emailExist = await this.userService.findByEmail(createUserDto.email);
-    if (emailExist) {
-      throw new UnprocessableEntityException('User already exist');
-    }
-
-    return await this.userService.create(createUserDto);
-  }
 
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
