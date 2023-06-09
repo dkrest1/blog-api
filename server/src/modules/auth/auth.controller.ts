@@ -2,13 +2,14 @@ import {
   Controller,
   Post,
   Body,
+  Query,
   UseGuards,
   Request,
   UsePipes,
   ValidationPipe,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { localAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-guard.guard';
@@ -112,6 +113,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: [PasswordResetDto] })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: 'the token required for password reset',
+  })
   @ApiResponse({
     status: 200,
     description: 'password reset successfully',
@@ -122,8 +128,9 @@ export class AuthController {
   @Post('reset/password')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async resetPassword(
+    @Query('token') token: string,
     @Body() passwordResetDto: PasswordResetDto,
   ): Promise<INormalResponse> {
-    return await this.authService.passwordReset(passwordResetDto);
+    return await this.authService.passwordReset(token, passwordResetDto);
   }
 }

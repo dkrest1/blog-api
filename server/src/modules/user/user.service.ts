@@ -71,6 +71,7 @@ export class UserService {
 
     const updatedUser = await this.userRepository.save({
       ...user,
+      ...updateUserSensitive,
     });
     return updatedUser;
   }

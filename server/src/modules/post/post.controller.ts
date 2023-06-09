@@ -93,7 +93,16 @@ export class PostController {
     description: 'Get all posts.',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiQuery({ name: 'page', enum: GetPosts })
+  @ApiQuery({
+    name: 'page',
+    enum: GetPosts,
+    description: 'the number of pages of posts',
+  })
+  @ApiQuery({
+    name: 'limit',
+    enum: GetPosts,
+    description: 'the number of post per page',
+  })
   @Get()
   getPosts(
     @Query('page') page = 1,

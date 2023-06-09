@@ -70,7 +70,7 @@ export class CommentController {
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'number of comments per pages',
+    description: 'number of comments per page',
   })
   @Get()
   async getAllComments(
