@@ -86,6 +86,7 @@ export class OtpService {
     } else if (existedOtp) {
       existedOtp.otp = otp;
       existedOtp.expiry = expiry;
+      await this.otpRepository.save(existedOtp);
     }
   }
 

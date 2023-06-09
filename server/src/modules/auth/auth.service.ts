@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
-import { comparePassword, hashPassword } from '../common/utils.';
+import { comparePassword } from '../common/utils.';
 import { OtpService } from '../otp/otp.service';
 import {
   INormalResponse,
@@ -187,21 +187,22 @@ export class AuthService {
       authToken: resetToken,
     });
 
-    const resetText = `Click the link to reset your password ${process.env.PASSWORD_RESET_URL_LINK}/auth/reset/password/${resetToken}`;
+    const resetLink = `Click the link to reset your password ${process.env.PASSWORD_RESET_URL_LINK}/auth/reset/password?token=${resetToken}`;
 
-    await this.otpService.sendToken(email, 'Password Reset', resetText);
+    await this.otpService.sendToken(email, 'Password Reset', resetLink);
 
     return {
-      message: 'please check your email for your password reset link',
+      message: `please check your email for your password reset link or  click ${resetLink}`,
       status: HttpStatus.CREATED,
     };
   }
 
   async passwordReset(
+    token: string,
     passwordResetDto: PasswordResetDto,
   ): Promise<INormalResponse> {
-    const { resetToken, password } = passwordResetDto;
-    const user = await this.verifyTOken(resetToken);
+    const { password } = passwordResetDto;
+    const user = await this.verifyTOken(token);
 
     if (!user || user === null) {
       return {
@@ -209,7 +210,7 @@ export class AuthService {
         status: HttpStatus.NOT_FOUND,
       };
     }
-    if (resetToken !== user.authToken) {
+    if (token !== user.authToken) {
       return {
         message: 'invalid token',
         status: HttpStatus.BAD_REQUEST,
@@ -223,9 +224,7 @@ export class AuthService {
       };
     }
 
-    const hashedPassword = await hashPassword(password);
-
-    await this.userService.update(user.id, { password: hashedPassword });
+    await this.userService.update(user.id, { password });
     await this.userService.updateUserSensitive(user.id, { authToken: null });
 
     return {

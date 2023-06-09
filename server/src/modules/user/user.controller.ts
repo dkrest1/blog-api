@@ -12,12 +12,12 @@ import {
   NotFoundException,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard.guard';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UpdateUserrole } from './dto/update-user-role.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/role.decorator';
 import { Role } from '../common/enum/role.enum';
@@ -67,6 +67,16 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'the number of pages of users',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'the number of users per pages',
+  })
   @ApiResponse({
     status: 200,
     description: 'Get list of Users on the Application',
@@ -101,13 +111,13 @@ export class UserController {
   @Roles(Role.ADMIN)
   @Post('admin/updaterole')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @ApiBody({ type: [UpdateUserrole] })
+  @ApiBody({ type: [UpdateUserRoleDto] })
   @ApiResponse({
     status: 201,
     description: 'The User Role has been successfully Updated.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  async updateRole(@Body() updateUserRole: UpdateUserrole): Promise<User> {
+  async updateRole(@Body() updateUserRole: UpdateUserRoleDto): Promise<User> {
     return await this.userService.updateUserRole(
       updateUserRole.email,
       updateUserRole.role,
