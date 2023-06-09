@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { UserModule } from './modules/user/user.module';
 import { SearchModule } from './modules/search/search.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -22,6 +23,20 @@ import { Otp } from './modules/otp/entities/otp.entity';
 
 @Module({
   imports: [
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: config.get<string>('MAIL_USERNAME'),
+            pass: config.get<string>('MAIL_PASSWORD'),
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
     MulterModule.register({
       storage: memoryStorage(),
     }),
