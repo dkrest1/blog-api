@@ -30,7 +30,6 @@ export class CommentService {
     await this.commentRepository.save(comment);
     return {
       username: `${user.firstname} ${user.lastname}`,
-      user_image: user.profilePicture,
       email: user.email,
       post_title: post.title,
       comment: comment.comment,

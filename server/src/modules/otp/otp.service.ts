@@ -38,7 +38,7 @@ export class OtpService {
       await this.mailerService.sendMail(message);
     } catch (err) {
       throw new HttpException(
-        'Something went Wrong, Please try again later',
+        'something went wrong, please try again later',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

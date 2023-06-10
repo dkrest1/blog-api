@@ -125,7 +125,7 @@ export class AuthService {
   }
 
   //verify token
-  async verifyTOken(token: string): Promise<User | null> {
+  async verifyToken(token: string): Promise<User | null> {
     try {
       const decoded = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('jWT_SECRET'),
@@ -202,7 +202,7 @@ export class AuthService {
     passwordResetDto: PasswordResetDto,
   ): Promise<INormalResponse> {
     const { password } = passwordResetDto;
-    const user = await this.verifyTOken(token);
+    const user = await this.verifyToken(token);
 
     if (!user || user === null) {
       return {
