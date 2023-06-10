@@ -8,7 +8,6 @@ import { faBars, faTimes, faClose } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import ProfileDrawer from './Drawer'
-import { userDetails } from './redux/UserSlice'
 import { token } from './redux/AccessTokenSlice'
 import { user } from './redux/UserDataSlice'
 
@@ -18,7 +17,6 @@ import { user } from './redux/UserDataSlice'
     
     const userData = useSelector(user)
     const accessToken = useSelector(token)
-    // const userdetails = useSelector(userDetails)
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu =()=>setIsOpen(false)
@@ -38,6 +36,7 @@ import { user } from './redux/UserDataSlice'
                     {/* Toggle Menu Button*/}
                     <div ref={ref}
                      className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        {accessToken &&
                         <button
                             type="button"
                             className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -45,9 +44,10 @@ import { user } from './redux/UserDataSlice'
                             >
                             {isOpen ? <FontAwesomeIcon icon={faTimes}/> : <FontAwesomeIcon icon={faBars}/>}
                         </button>
+                        }
                     </div>
-                    <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-between">
-                        <div className="flex-shrink-0 flex items-center">
+                    <div className={`${accessToken ? ' flex-1 flex items-center justify-center sm:items-stretch sm:justify-between ' : 'justify-start '}`}>
+                        <div className={`flex-shrink-0 flex items-center`}>
                             <Link to='/' className='' >
                                 <span className=' text-white text-lg md:text-2xl md:font-bold'>&lt;/&gt;</span>
                                 {/* <img
@@ -105,7 +105,7 @@ import { user } from './redux/UserDataSlice'
                         </NavLink> */}
                     </div>
                     <div>
-                        <ProfileDrawer selectedFile={selectedFile} accessToken={accessToken} userData={userData}/>
+                        <ProfileDrawer />
                     </div>
                 </div>
             </div>

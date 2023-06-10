@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { allUserPosts } from "../redux/UserPostSlice";
+// import { allUserPosts } from "../redux/UserPostSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Typography } from "@material-tailwind/react";
@@ -19,7 +19,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { post } from "../redux/PostSlice";
 
 function WritingPage({accessToken}) {
-  const userPost = useSelector(allUserPosts)
+  // const userPost = useSelector(allUserPosts)
   const fetchedPost = useSelector(post)
   // console.log(postFetched)
   const dispatch = useDispatch()

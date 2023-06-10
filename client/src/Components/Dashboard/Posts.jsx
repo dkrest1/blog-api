@@ -14,7 +14,8 @@ import axios from 'axios';
 import {toast, ToastContainer} from 'react-toastify'
 import { user } from '../redux/UserDataSlice';
 import { getPosts } from '../redux/PostSlice';
-
+import UseGet from '../UseGet';
+import ReactLoading from 'react-loading'
  
 
 const Pagination =({totalPages, currentPage, setCurrentPage})=>{
@@ -64,7 +65,9 @@ const Posts = ({ postFetched, isPending}) => {
   const userData = useSelector(user)
   const accessToken = useSelector(token)
   const dispatch = useDispatch()
-  const notify =()=>toast("Post Deleted Successfully")
+  let status
+  const notify =()=>toast(status)
+  const {fetchedPosts} = UseGet('http://localhost:3000/post', accessToken)
 
   let objectsPerPage
     if(postFetched && postFetched.length <4){
@@ -79,31 +82,33 @@ const Posts = ({ postFetched, isPending}) => {
     else if(postFetched && postFetched.length < 30){
       objectsPerPage = 8
     }
-  
-    const [currentPage, setCurrentPage] = useState(1);  
-    const totalPages =postFetched && Math.ceil(postFetched.length / objectsPerPage);
 
+  const [currentPage, setCurrentPage] = useState(1);  
+  const totalPages =postFetched && Math.ceil(postFetched.length / objectsPerPage);
   const startIndex = (currentPage - 1) * objectsPerPage;
   const endIndex = startIndex + objectsPerPage;
- 
   let currentObjects = postFetched && postFetched.slice(startIndex, endIndex); 
 
   const navigateTo = useNavigate()
-
-  // const onReadMoreClick = (postId)=>{
-  //   navigateTo(`/read-post-page/${postId}`)
-  //   }
   
-  const [likeState, setButtonState] = useState(false)
+  let [likeCount, setLikeCount] = useState(0)
+  const [userLiked, setUserLiked] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
 
-  const handleLikeButton =(postId)=>{
-    currentObjects.filter((obj)=>{
-      if(postId ===obj.id){
-        console.log(postId + ' is available')
-        setButtonState(!likeState)
-      }
-    })
+  const handleLikeButton =(postId, userId)=>{
+    const headers ={
+      Authorization: `Bearer ${accessToken}`
+    }
+    axios.post(`http://localhost:3000/post/like/${postId}`, {headers} )
+      .then(function(response){
+        // if(response.statusText==='OK'){
+        console.log(response)
+        // console.log('liked by', userId)
+      // }
+      })
+      .catch(function(error){
+        console.log(error)
+      })
   }
   const handleBookmarkButton = ()=>{
     setBookmarkState(!bookmarkState)
@@ -116,15 +121,30 @@ const Posts = ({ postFetched, isPending}) => {
     axios.delete(`http://localhost:3000/post/${postId}`, {headers} )
     .then(function(response){
       if(response.statusText==='OK'){
-        console.log("post deleted successfully")
+        status ="Post Deleted Successfully"
         notify()
         console.log(response)
         dispatch(getPosts( postFetched.filter((obj)=>obj.id!==postId)))
     }
     })
     .catch(function(error){
+      status = "Something happened, couldn't delete post"
+      notify()
       console.log(error)
     })
+  }
+  // console.log(fetchedPosts)
+  const handleEditPost = (postId) =>{
+    if(fetchedPosts){
+      let data = fetchedPosts.find((obj)=>obj.id===postId)
+      // console.log(data)
+      localStorage.setItem('editPost', JSON.stringify(data))
+      // console.log(localStorage.getItem('editPost'))
+      navigateTo(`/edit-post/${postId}`)
+  } else{
+    status="Couldn't fetch post"
+    notify()
+  }
   }
 
   return (
@@ -134,7 +154,7 @@ const Posts = ({ postFetched, isPending}) => {
       </div>
         {/* <Cards/> */}
         { isPending ?
-        <p className='text-sm text-center'>loading...</p>
+          <ReactLoading type='spin' color='blue' height={50} width={50} className='self-center' />
         :postFetched ?
         <div className='flex flex-col divide-y divide-gray-300 md:w-full mx-2 md:gap-8 items-center '>
             {currentObjects.map((object)=>(
@@ -182,8 +202,8 @@ const Posts = ({ postFetched, isPending}) => {
                       </CardFooter>
                       <CardFooter className='-mb-3 z-0 '>
                           <div className='flex justify-between gap-2 text-xs -mt-6 md:-mt-3'>
-                              <button onClick={()=>handleLikeButton(object.id)}>
-                                  <FontAwesomeIcon icon={faHeart} className={`${likeState && 'text-red-600'}`}/> <span>{object.PostLikes}</span>
+                              <button onClick={()=>handleLikeButton(object.id, object.user.id)}>
+                                  <FontAwesomeIcon icon={faHeart} className={``}/> <span>{object.likeCount}</span>
                               </button>
                               <button>
                                   <FontAwesomeIcon icon={faComment}/> <span>{object.PostComments}</span>
@@ -199,7 +219,7 @@ const Posts = ({ postFetched, isPending}) => {
                                       <div className=' flex flex-col z-20 items-start space-y-3'>
                                           { userData.email === object.user.email ? 
                                             <>
-                                              <button>Edit Story</button>
+                                              <button onClick={()=>handleEditPost(object.id)}>Edit Story</button>
                                               <button onClick={()=>handleDeletePost(object.id)}>Delete Story</button>
                                             </>
                                             :
