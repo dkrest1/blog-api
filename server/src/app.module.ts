@@ -42,7 +42,7 @@ import { Otp } from './modules/otp/entities/otp.entity';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..'),
-      exclude: ['/auth'],
+      exclude: ['/auth/reset/password'],
     }),
     ConfigModule.forRoot({ isGlobal: true, load: [dbConfig, jwtConfig] }),
     TypeOrmModule.forRootAsync({
