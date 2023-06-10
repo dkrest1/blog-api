@@ -130,6 +130,15 @@ const ReadPostPage = ({postArray}) => {
       setShowComment(true)
       setEditComment(commentList.find((comment)=>comment.id===commentId))
     }
+    const handleUpdateComment = (commentId)=>{
+      axios.patch(`http://localhost:3000/${commentId}`, {headers})
+      .then(function(response){
+        console.log(response)
+      })
+      .catch(function(error){
+        console.log(error)
+      })
+    }
   // console.log(typeof(commentList))
  
   const DisplayPost =()=>{
@@ -213,7 +222,10 @@ const ReadPostPage = ({postArray}) => {
                                         <div className=' flex flex-col z-20 items-start space-y-3'>
                                             { userData.email === obj.user.email ? 
                                               <>
+                                                {editComment ?
+                                                <button onClick={()=>handleUpdateComment(obj.id)}>Update Comment</button> :
                                                 <button onClick={()=>handleEditComment(obj.id)}>Edit Comment</button>
+                                                }
                                                 <button onClick={()=>handleDeleteComment(obj.id)}>Delete Comment</button>
                                               </>
                                               :
