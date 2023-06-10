@@ -42,7 +42,7 @@ const SignUpForm = () => {
     event.preventDefault();
     const validationErrors = validateForm(formValues);
     if (Object.keys(validationErrors).length === 0) {
-      axios.post("http://localhost:3000/user/create", 
+      axios.post("http://localhost:3000/auth/register", 
         {
           email: formValues.email.toString(),
           firstname: formValues.firstName.toString(),
@@ -52,7 +52,7 @@ const SignUpForm = () => {
         })
         .then(function (response) {
           console.log(response);
-          if (response.status === 201 ){
+          if (response.statusText==='OK'){
             alert("sign up successful")
             openModal()
           }
@@ -61,9 +61,6 @@ const SignUpForm = () => {
         .catch(function(error){
           console.log(error)
         })
-      // console.log("Valid form data:", formValues);
-      // 
-      
     } else {
       setErrors(validationErrors);
     }
@@ -99,8 +96,6 @@ const SignUpForm = () => {
     }
     return errors;
   };
-
-
 
   const [showModal, setShowModal] = useState(false);
   

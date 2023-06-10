@@ -15,6 +15,7 @@ export const Login = () => {
   const accessToken = useSelector(token)
   const [atoken, setToken] = useState(null)
   const [userData, setUserData] = useState(null)
+  const [isPending, setIsPending] = useState(false)
   const dispatch = useDispatch()
   useEffect(()=>{
     dispatch(getToken(Cookies.get('token')))
@@ -38,6 +39,7 @@ export const Login = () => {
 
   const handleLoginSubmit =(event)=>{
     event.preventDefault()
+    setIsPending(true)
     axios.post("http://localhost:3000/auth/login", formValues)
     .then(function (response){
       console.log(response)
@@ -55,21 +57,29 @@ export const Login = () => {
         .then(function(response){
           let data = response.data
           setUserData(data)
+          setIsPending(false)
           console.log(response.data)
         })
         .catch(function(error){
           console.log(error)
+          
         })
         setTimeout(() => {
           navigateTo('/')
         }, 2000);
+        setIsPending(false)
       }
     })
     .catch(function (error){
       console.log(error)
+      setIsPending(false)
     })
   }
   // console.log(accessToken)
+  const handleForgotPassword =(event)=>{
+    event.preventDefault()
+    navigateTo('/forgot-password')
+  }
 
   return (
     <div>
@@ -77,7 +87,7 @@ export const Login = () => {
             <div className="bg-white p-8 rounded-lg md:p-14">
               <ToastContainer/>
               <h2 className="text-2xl font-bold mb-4 text-center font-mono md:text-3xl">Login</h2>
-              <form onSubmit={handleLoginSubmit}>
+              <form>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
                     Email
@@ -90,7 +100,7 @@ export const Login = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="flex flex-col mb-4">
                   <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
                     Password
                   </label>
@@ -101,11 +111,13 @@ export const Login = () => {
                     placeholder="Password"
                     onChange={handleInputChange}
                   />
+                  <button className='self-end text-xs mt-2 text-blue-600' onClick={handleForgotPassword}>Forgot Password</button>
                 </div>
                 <div className="flex items-center justify-between">
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type='submit'
+                    className="bg-blue-500  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    onClick={handleLoginSubmit}
+                    disabled={isPending}
                     // onClick={handleLoginSubmit}
                   >
                     Sign In

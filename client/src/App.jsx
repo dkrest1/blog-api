@@ -18,6 +18,7 @@ import { token } from './Components/redux/AccessTokenSlice';
 import { user } from './Components/redux/UserDataSlice';
 import { getUser } from './Components/redux/UserDataSlice';
 import { EditPost } from './Components/Dashboard/EditPost';
+import { ForgetPassword } from './Components/Auth/ForgetPassword';
 
 
 
@@ -32,12 +33,6 @@ function App() {
   const initialState = localStorage.getItem("profilePic") || null;
   const [selectedFile, setSelectedFile] = useState(initialState);
 
-//   const array = [{name: 'John', lname:'Doe', Email:'john.doe@example.com'}];
-
-// const [firstName, lastName, email] = array;
-
-// // const obj = { firstName, lastName, email };
-// console.log(firstName)
 
 
   return (
@@ -56,6 +51,7 @@ function App() {
           {/* <Route path='/read-post-page/:id' element={<PostPage postArray={postArray} />}/> */}
           <Route path='/read-post-page/:id' element={<ReadPostPage postArray={postArray} />}/>
           <Route path='/edit-post/:id' element={<EditPost/>}/>
+          <Route path ='forgot-password' element={<ForgetPassword/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
