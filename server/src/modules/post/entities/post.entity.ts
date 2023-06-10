@@ -21,12 +21,6 @@ export class Post {
   title: string;
 
   @Column({
-    type: 'bytea',
-    nullable: true,
-  })
-  img?: Buffer;
-
-  @Column({
     type: 'text',
   })
   content: string;

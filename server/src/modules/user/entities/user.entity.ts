@@ -34,9 +34,6 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.SUBSCRIBER })
   role: Role;
 
-  @Column({ type: 'bytea', nullable: true })
-  profilePicture: Buffer;
-
   @ManyToMany(() => Post, (post) => post.likes)
   @JoinTable()
   likedPosts: Post[];
