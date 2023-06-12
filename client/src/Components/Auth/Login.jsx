@@ -31,7 +31,8 @@ export const Login = () => {
   });
   
   const navigateTo = useNavigate()
-  const notify =()=> toast("Login Successful!")
+  let status
+  const notify =()=> toast(status)
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
@@ -43,8 +44,7 @@ export const Login = () => {
     axios.post("http://localhost:3000/auth/login", formValues)
     .then(function (response){
       console.log(response)
-      if (response.status === 201){
-        notify()
+      if (response.statusText === 'Created'){
         let data = response.data.access_token
         setToken(data)
         // localStorage.setItem('token', data)
@@ -59,10 +59,13 @@ export const Login = () => {
           setUserData(data)
           setIsPending(false)
           console.log(response.data)
+          status="Login Successful!"
+          notify()
         })
         .catch(function(error){
           console.log(error)
-          
+          status = error.response.data.message
+          notify()
         })
         setTimeout(() => {
           navigateTo('/')

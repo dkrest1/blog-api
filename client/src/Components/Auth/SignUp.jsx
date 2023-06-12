@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLessThan } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import {toast, ToastContainer} from 'react-toastify'
 
 const BackButton = ()=>{
   const navigate = useNavigate()
@@ -28,11 +29,13 @@ const SignUpForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  let status =''
+  const notify=()=>toast(status)
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
-    console.log(value)
+    // console.log(value)
     if(errors[name]){
     setErrors((prevValues)=>({...prevValues, [name]:''}))
     // console.log(errors)
@@ -60,6 +63,8 @@ const SignUpForm = () => {
         })
         .catch(function(error){
           console.log(error)
+          status =error.response.data.message
+          notify()
         })
     } else {
       setErrors(validationErrors);
@@ -163,6 +168,7 @@ const SignUpForm = () => {
     <div>
       {/* <BackButton/> */}
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <ToastContainer/>
           <div><Modal/></div>
         <div className="bg-white lg:w-1/3 md:w-1/2 sm:w-2/3 rounded-lg shadow-lg p-8 lg:my-4">
           <h2 className="text-center font-bold text-gray-800 text-xl mb-4">
@@ -250,7 +256,7 @@ const SignUpForm = () => {
                   type="password"
                   id="confirmPassword"
                   className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
-                    errors.confirmPassword ? "border-red-500" :  formValues.confirmPassword && formValues.confirmPassword ===formValues.password ? 'border-green-600' :''
+                    errors.confirmPassword ? "border-red-500" :  formValues.confirmPassword && formValues.confirmPassword ===formValues.password ? 'border-blue-600' :''
                   }`}
                   name="confirmPassword"
                   value={formValues.confirmPassword}
