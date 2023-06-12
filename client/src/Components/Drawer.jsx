@@ -8,28 +8,23 @@ import {
 } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { userDetails } from "./redux/UserSlice";
 import { user } from "./redux/UserDataSlice";
 import { token } from "./redux/AccessTokenSlice";
 
 const ProfileDrawer =()=> {
   const accessToken = useSelector(token)
   const userData = useSelector(user)
-  // const userdetails = useSelector(userDetails)
-  // console.log(userdetails)
-    
   const [open, setOpen] = useState(false);
-  
   const openDrawer = () => setOpen(true);
   const closeDrawer = () => setOpen(false);
     return(
       <div className="">
         { !userData ?
         <FontAwesomeIcon 
-          icon={faUserCircle} 
+          icon={accessToken ? faBars : faUserCircle}
           onClick={openDrawer} 
           className='text-2xl text-white' 
           /> :
@@ -87,7 +82,7 @@ const ProfileDrawer =()=> {
                             >
                                 Login   
                           </NavLink>
-                          <NavLink to='/signup' onClick={closeDrawer} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
+                          <NavLink to='/sign-up' onClick={closeDrawer} className="block py-2.5 px-4 text-base font-medium text-white hover:bg-white hover:text-blue-900"
                           >
                                   Sign Up
                                   {/* would be dynamic: would determined based on user's current level  */}

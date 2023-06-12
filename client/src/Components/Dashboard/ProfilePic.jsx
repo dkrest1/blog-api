@@ -5,10 +5,16 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addFile, userDetails } from '../redux/UserSlice';
+import { user } from '../redux/UserDataSlice';
+import { token } from '../redux/AccessTokenSlice';
+import axios from 'axios';
 // import { userDetails } from '../redux/UserSlice';
 
 const ProfileAvatar = () => {
     const userdetails = useSelector(userDetails)
+    const userData = useSelector(user)
+    const accessToken = useSelector(token)
+    // console.log(userData)
     // console.log(userdetails.profilePic)
     const dispatch = useDispatch()
     // const user = useSelector((state)=>state.user.name)
@@ -18,6 +24,17 @@ const ProfileAvatar = () => {
     const file = event.target.files[0];
     const imageFile = URL.createObjectURL(file)
     dispatch(addFile(imageFile))
+
+    // const headers ={
+    //   Authorization : `Bearer ${accessToken}`
+    // }
+    // axios.post('http://localhost:3000/upload/me/avatar', imageFile, {headers})
+    // .then((repsonse)=>{
+    //   console.log(repsonse)
+    // })
+    // .catch((error)=>{
+    //   console.log(error)
+    // })
   };
  
   useEffect(()=>{
@@ -30,6 +47,7 @@ const ProfileAvatar = () => {
       fileInputRef.current.click();
     }
   };
+
 
 // localStorage.removeItem('profilePic')
   return (

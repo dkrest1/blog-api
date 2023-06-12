@@ -1,32 +1,85 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectAllPosts } from '../redux/PostsSlice'
 import ProfileAvatar from './ProfilePic'
-import { userDetails } from '../redux/UserSlice'
-import { nameChange, emailChange } from '../redux/UserSlice'
 import { Button } from '@material-tailwind/react'
 import { user } from '../redux/UserDataSlice'
 import { post } from '../redux/PostSlice'
+import { token } from '../redux/AccessTokenSlice'
+import axios from 'axios'
+import {ToastContainer, toast} from 'react-toastify'
+import { getUser} from '../redux/UserDataSlice'
 
 export const RenderMeTab = ()=>{
-    const userdetails = useSelector(userDetails)
     const userData = useSelector(user)
-    const postArray = useSelector(selectAllPosts)
-    const postFetched = useSelector(post)
+    const accessToken =useSelector(token)
+    const [updateData, setUpdateData] = useState(
+      {
+        email: '',
+        firstname: '',
+        lastname: '',
+        password: ''
+      }
+    )
     const dispatch = useDispatch()
-    // console.log(userData)
 
+    const handleInputChange=(event)=>{
+      const {name, value} = event.target
+      setUpdateData((prevValues)=>({...prevValues, [name]: value}))
+    }
+    let updates={
+      ...(updateData.email && {email : updateData.email}),
+      ...(updateData.firstname && {firstname : updateData.firstname}),
+      ...(updateData.lastname && {lastname : updateData.lastname}),
+      ...(updateData.password && {password : updateData.password}),
+    }
+    const [updatedUser, setUpdatedUser] = useState(null)
     useEffect(()=>{
-        localStorage.setItem('userName',userdetails.name)
-        localStorage.setItem('userEmail',userdetails.email)
-    },[userdetails.name, userdetails.email])
+      if(!updatedUser){
+        return
+      }
+      else{
+      dispatch(getUser(updatedUser))
+    }
+    })
+    let status
+    const notify=()=>toast(status)
+    const handleUpdateDetails = (event)=>{
+      event.preventDefault()
+      const headers={
+        Authorization: `Bearer ${accessToken}`
+      }
+      axios.patch('http://localhost:3000/user/me', updates, {headers})
+      .then((response)=>{
+        if(response.statusText==='OK'){
+          axios.get('http://localhost:3000/user/me', {headers})
+          .then((response)=>{
+            let data = response.data
+            setUpdatedUser(data)
+          })
+          status = 'Profile updated successfully!'
+          notify()
+          setUpdateData({email:'', firstname:'', lastname:'', password:''})
+        }
+      })
+      .catch((error)=>{
+        console.log(error)
+        status = "Something happened, couldn't update!"
+        notify()
+      })
+    }
+
     return(
       <div className='px-1 md:px-3'>
+        <ToastContainer/>
         <div className='flex flex-col divide-y gap-5'>
           <div className='flex flex-col mt-3 items-center md:-mb-3'>
-            {!userData.profilePicture ? <p className='text-sm text-gray-500 md:text-lg'><span className='md:hidden'>Tap</span><span className='hidden md:inline'>Click </span> to upload Profile image</p> :<p className='text-sm text-gray-300 md:text-lg'><span className='md:hidden'>Tap </span> <span className='hidden md:inline'>Click </span>to change profile image</p>}
+            {userData && !userData.profilePicture ? 
+              <p className='text-sm text-gray-500 md:text-lg'>
+                <span className='md:hidden'>Tap</span><span className='hidden md:inline'>Click </span> to upload Profile image</p> :<p className='text-sm text-gray-300 md:text-lg'><span className='md:hidden'>Tap </span> <span className='hidden md:inline'>Click </span>to change profile image
+              </p>
+            }
             <ProfileAvatar/>
             <p className='text-lg -mb-2 text-gray-800 font-semibold mt-3 md:text-2xl'>{userData.firstname} {userData.lastname}</p>
             <small className='text-xs text-gray-600 md:mt-2 md:text-sm'>{userData.email}</small>
@@ -38,37 +91,52 @@ export const RenderMeTab = ()=>{
             <form>
               <div className='flex flex-col '>
                 <label className='text-xs md:text-base md:font-semibold'>Name</label>
-                <div className='flex flex-row gap 3'>
+                <div className='flex flex-row gap-6'>
                   <input type='text' minLength={2} maxLength={25}
-                    className=' md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:focus:border-none md:text-lg text-gray-600' 
-                    placeholder='first name'
-                  required value={userData.firstname} 
-                  onChange={(event)=>{
-                      dispatch(
-                          nameChange(
-                      event.target.value))}}
+                    name='firstname'
+                    className=' w-32 md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:focus:border-none md:text-lg text-gray-600' 
+                    placeholder={userData.firstname}
+                  required value= {updateData.firstname}
+                  onChange={()=>handleInputChange(event)}
                   />
                   <input type='text' minLength={2} maxLength={25}
-                  className=' md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:focus:border-none md:text-lg text-gray-600'
-                  placeholder='last name' 
-                  required value={userData.lastname}
+                    name='lastname'
+                    className=' w-32 md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:focus:border-none md:text-lg text-gray-600'
+                    placeholder={userData.lastname}
+                    value={updateData.lastname} 
+                    required 
+                    onChange={()=>handleInputChange(event)}
                   /> 
                 </div>
               </div> 
               <div className='flex flex-col mt-5 '>
                 <label className='text-xs md:text-base md:font-semibold'>Email address</label>
                 <input type='email' 
+                  name='email'
                   className='md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:text-lg md:text-gray-600' 
-                required 
-                value={userData.email} 
-                onChange={(event)=>{
-                    dispatch(
-                        emailChange(event.target.value)
-                    )
-                }}
+                  required
+                  placeholder={userData.email}
+                  value= {updateData.email}
+                  onChange={()=>handleInputChange(event)}
                 />
-              </div>     
+              </div>  
+              <div className='flex flex-col mt-5 '>
+                <label className='text-xs md:text-base md:font-semibold'>Password</label>
+                <input type='password'
+                  name='password' 
+                  className='md:w-64 border-b focus:border-b-2 focus:border-blue-600 md:text-lg md:text-gray-600' 
+                  required
+                  placeholder='new password'
+                  value= {updateData.password}
+                  onChange={()=>handleInputChange(event)}
+                />
+              </div>    
               {/* <button className='bg-blue-600 text-white rounded px-3 mt-4'> Update</button>          */}
+              <button className='bg-blue-600 text-white px-4 mt-5 rounded'
+                onClick={handleUpdateDetails}
+                >
+                  Update
+              </button>
             </form>
           </div>
           <div className=' mt-5 pt-3 md:mt-10 md:pt-10'>

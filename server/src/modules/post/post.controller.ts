@@ -37,7 +37,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.AUTHOR, Role.MODERATOR)
+  @Roles(Role.ADMIN, Role.AUTHOR, Role.MODERATOR, Role.SUBSCRIBER)
   @ApiResponse({
     status: 201,
     description: 'Post created successfully.',

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLessThan } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import {toast, ToastContainer} from 'react-toastify'
 
 const BackButton = ()=>{
   const navigate = useNavigate()
@@ -28,17 +29,23 @@ const SignUpForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  let status =''
+  const notify=()=>toast(status)
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
+    // console.log(value)
+    if(errors[name]){
+    setErrors((prevValues)=>({...prevValues, [name]:''}))
+    // console.log(errors)
+    }
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = validateForm(formValues);
     if (Object.keys(validationErrors).length === 0) {
-      axios.post("http://localhost:3000/user/create", 
+      axios.post("http://localhost:3000/auth/register", 
         {
           email: formValues.email.toString(),
           firstname: formValues.firstName.toString(),
@@ -48,7 +55,7 @@ const SignUpForm = () => {
         })
         .then(function (response) {
           console.log(response);
-          if (response.status === 201 ){
+          if (response.statusText==='OK'){
             alert("sign up successful")
             openModal()
           }
@@ -56,10 +63,9 @@ const SignUpForm = () => {
         })
         .catch(function(error){
           console.log(error)
+          status =error.response.data.message
+          notify()
         })
-      // console.log("Valid form data:", formValues);
-      // 
-      
     } else {
       setErrors(validationErrors);
     }
@@ -96,7 +102,6 @@ const SignUpForm = () => {
     return errors;
   };
 
-
   const [showModal, setShowModal] = useState(false);
   
   const closeModal = () => {
@@ -114,8 +119,8 @@ const SignUpForm = () => {
             <div className="bg-white p-8 rounded-lg md:p-14">
               <h2 className="text-2xl font-bold mb-4 text-center font-mono md:text-3xl">Login</h2>
               <form>
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
+                <div className="mb-">
+                  <label className="block text-gray-700 font-bold mb-1" htmlFor="email">
                     Email
                   </label>
                   <input
@@ -125,8 +130,8 @@ const SignUpForm = () => {
                     placeholder="Email"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
+                <div className="mb-">
+                  <label className="block text-gray-700 font-bold mb-1" htmlFor="password">
                     Password
                   </label>
                   <input
@@ -161,23 +166,24 @@ const SignUpForm = () => {
  
   return (
     <div>
-      <BackButton/>
+      {/* <BackButton/> */}
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <ToastContainer/>
           <div><Modal/></div>
         <div className="bg-white lg:w-1/3 md:w-1/2 sm:w-2/3 rounded-lg shadow-lg p-8 lg:my-4">
-          <h2 className="text-center font-bold text-gray-800 text-2xl mb-4">
+          <h2 className="text-center font-bold text-gray-800 text-xl mb-4">
             Create an account
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
-                <label htmlFor="first-name" className="block text-gray-800 font-bold mb-2">
+                <label htmlFor="first-name" className="block text-gray-800 text-sm font-semibold mb-2">
                   First Name
                 </label>
                 <input
                   type="text"
                   id="first-name"
-                  className={`block w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
+                  className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
                     errors.firstName ? "border-red-500" : ""
                   }`}
                   name="firstName"
@@ -185,17 +191,17 @@ const SignUpForm = () => {
                   onChange={handleInputChange}
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="last-name" className="block text-gray-800 font-bold mb-2">
+                <label htmlFor="last-name" className="block text-gray-800 text-sm font-semibold mb-2">
                   Last Name
                 </label>
                 <input
                   type="text"
                   id="last-name"
-                  className={`block w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
+                  className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
                     errors.lastName ? "border-red-500" : ""
                   }`}
                   name="lastName"
@@ -203,17 +209,17 @@ const SignUpForm = () => {
                   onChange={handleInputChange}
                 />
                 {errors.lastName && (
-                  <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="email" className="block text-gray-800 font-bold mb-2">
+                <label htmlFor="email" className="block text-gray-800 text-sm font-semibold mb-2">
                   Email Address
                 </label>
                 <input
                   type="email"
                   id="email"
-                  className={`block w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
+                  className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
                     errors.email ? "border-red-500" : ""
                   }`}
                   name="email"
@@ -221,17 +227,17 @@ const SignUpForm = () => {
                   onChange={handleInputChange}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="password" className="block text-gray-800 font-bold mb-2">
+                <label htmlFor="password" className="block text-gray-800 text-sm font-semibold mb-2">
                   Password
                 </label>
                 <input
                   type="password"
                   id="password"
-                  className={`block w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
+                  className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
                     errors.password ? "border-red-500" : ""
                   }`}
                   name="password"
@@ -239,31 +245,31 @@ const SignUpForm = () => {
                   onChange={handleInputChange}
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="confirm-password" className="block text-gray-800 font-bold mb-2">
+                <label htmlFor="confirm-password" className="block text-gray-800 text-sm font-semibold mb-2">
                   Confirm Password
                 </label>
                 <input
                   type="password"
                   id="confirmPassword"
-                  className={`block w-full px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
-                    errors.confirmPassword ? "border-red-500" : ""
+                  className={`block w-full h-8 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-gray-400 ${
+                    errors.confirmPassword ? "border-red-500" :  formValues.confirmPassword && formValues.confirmPassword ===formValues.password ? 'border-blue-600' :''
                   }`}
                   name="confirmPassword"
                   value={formValues.confirmPassword}
                   onChange={handleInputChange}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
                 )}
               </div>
               <div className="text-center">        
                   <button
                       type="submit"
-                      className="py-3 px-6 bg-gray-800 text-white rounded-lg hover:bg-gray-700"   >
+                      className="py-1 px-6 bg-blue-800 text-white rounded-lg hover:bg-transparent hover:text-blue-800 hover:ring-1 hover:ring-blue-800"   >
                       Sign Up
                   </button>
               </div>

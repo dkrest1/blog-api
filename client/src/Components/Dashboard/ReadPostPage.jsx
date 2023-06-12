@@ -1,7 +1,6 @@
 import React from 'react'
 import TopMenu from '../TopMenu'
 import { useSelector } from 'react-redux'
-import { selectAllPosts } from '../redux/PostsSlice'
 import { Avatar, Popover, PopoverContent, PopoverHandler } from '@material-tailwind/react'
 import {Timeline,TimelineItem,TimelineConnector,TimelineHeader,TimelineIcon,TimelineBody,Typography,} from "@material-tailwind/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +8,6 @@ import { faHeart, faBookmark, faComment, faEllipsis } from '@fortawesome/free-so
 import { useState } from 'react'
 import Posts from './Posts'
 import { useNavigate, useParams } from 'react-router-dom'
-import { userDetails } from '../redux/UserSlice'
 import { post } from '../redux/PostSlice'
 import { token } from '../redux/AccessTokenSlice'
 import { ToastContainer, toast } from 'react-toastify'
@@ -17,16 +15,14 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { user } from '../redux/UserDataSlice'
 
-const ReadPostPage = ({postArray}) => {
+const ReadPostPage = () => {
   const {id} = useParams() 
-  const userdetails = useSelector(userDetails)
   const userData = useSelector(user)
   const postFetched = useSelector(post)
   const accessToken = useSelector(token)
-  // const postArray = useSelector(selectAllPosts)
   let postId = (id)
-
-  const notify=()=> toast('successful!')
+  let status ='successful'
+  const notify=()=> toast(status)
 
   const [likeState, setLikeState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
@@ -36,9 +32,8 @@ const ReadPostPage = ({postArray}) => {
   const [comments, setComments] = useState({
     comment: ''
   })
-  const [commentsCount, setCommentcount] = useState(null)
   const [editComment, setEditComment] = useState(null)
-
+  const [commentID, setCommentID] = useState('')
 
   const onInputChange =(event)=>{
     const {name, value} = event.target
@@ -52,6 +47,8 @@ const ReadPostPage = ({postArray}) => {
     setBookmarkState(!bookmarkState)
   }
   const handleCommentClick =()=>{
+    setEditComment(null)
+    setError("")
     setShowComment(!showComment)
   }
 
@@ -65,6 +62,7 @@ const ReadPostPage = ({postArray}) => {
       navigateTo('/login')
     }
   })
+  //fetches all the comments
   useEffect(()=>{
     axios.get(`http://localhost:3000/comment`, {headers})
     .then(function(response){
@@ -75,9 +73,11 @@ const ReadPostPage = ({postArray}) => {
     })
     .catch(function(error){
       console.log(error)
+      status="couldn't fetch comments"
+      notify()
     })
   },)
-  // console.log(commentList)
+
   const handleSubmitComment =(event)=>{
     event.preventDefault()
     if(!comments.comment){
@@ -87,49 +87,83 @@ const ReadPostPage = ({postArray}) => {
     else if(!editComment){
     axios.post(`http://localhost:3000/comment/create/${postId}`,comments, {headers})
     .then(function(response){
-      // console.log(response.data)
+      if(response.statusText==='OK'){
+        status= 'Comment successful'
+        notify()
+        setShowComment(!showComment)
+    }
+    })
+    .catch(function(error){
+      console.log(error)
+      status="couldn't post comment"
       notify()
-      setShowComment(!showComment)
+    })
+  } else{
+    axios.patch(`http://localhost:3000/comment/patch/${postId}`)
+    .then(function(response){
+      if(response.statusText==='OK'){
+        status="Comment updated successfully"
+        notify()
+      }
+    })
+    .catch(function(error){
+      console.log(error)
+      status="Couldn't update comment"
+      notify()
+    })
+  }
+  }
+
+  const handleDeleteComment=(commentId)=>{
+    axios.delete(`http://localhost:3000/comment/${commentId}`, {headers})
+    .then(function(response){
+      console.log(response)
+      if(response.statusText==='OK'){
+        setCommentList(commentList.filter((comment)=>comment.id !==commentId))
+        status ='Comment deleted successfully'
+        notify()
+      }
+    })
+  }
+
+  useEffect(()=>{
+    if (editComment){
+      setComments({comment:editComment.comment})
+    } else{
+      setComments({comment:''})
+    }
+  },[setComments, editComment])
+
+
+  const handleEditComment=(commentId)=>{
+    // console.log(commentId)
+    setCommentID(commentId)
+    setShowComment(true)
+    setEditComment(commentList.find((comment)=>comment.id===commentId))
+    // return getComment
+  }
+  const handleUpdateComment = ()=>{
+    // console.log(commentID)
+    if(!comments.comment){
+      setError('Comment cannot be empty!')
+      return
+    } else{
+    axios.patch(`http://localhost:3000/comment/${commentID}`, comments, {headers})
+    .then(function(response){
+      console.log(response)
+      if(response.statusText==='OK'){
+        setShowComment(false)
+        setCommentID(null)
+        status ="Comment updated successfully"
+        notify()
+      }
     })
     .catch(function(error){
       console.log(error)
     })
-  } else{
-    axios.patch(`http://localhost:3000/comment/patch/${postId}`)
   }
   }
-
-  const deleted=()=>toast("Comment deleted successfully")
-    const handleDeleteComment=(commentId)=>{
-      console.log(commentId)
-      console.log(commentList)
-      const headers={
-        Authorization : `Bearers ${accessToken}`
-      }
-      axios.delete(`http://localhost:3000/comment/${commentId}`, {headers})
-      .then(function(response){
-        console.log(response)
-        if(response.statusText==='OK'){
-          console.log('deleted')
-          setCommentList(commentList.filter((comment)=>comment.id !==commentId))
-          deleted()
-        }
-      })
-    }
-
-    useEffect(()=>{
-      if (editComment){
-        setComments({comment:editComment.comment})
-      } else{
-        setComments({comment:''})
-      }
-    },[setComments, editComment])
-
-    const handleEditComment=(commentId)=>{
-      console.log(commentId)
-      setShowComment(true)
-      setEditComment(commentList.find((comment)=>comment.id===commentId))
-    }
+  
   // console.log(typeof(commentList))
  
   const DisplayPost =()=>{
@@ -184,18 +218,21 @@ const ReadPostPage = ({postArray}) => {
                       value={comments.comment}
                       onChange={()=>onInputChange(event)}
                     />
-                    <button onClick={handleSubmitComment} className='bg-blue-400 p-2 m-2 text-sm'>Post Comment</button>
+                    {editComment ?
+                      <button className='bg-blue-400 p-2 m-2 text-sm' onClick={()=>handleUpdateComment()}>Update Comment</button> :
+                      <button onClick={handleSubmitComment} className='bg-blue-400 p-2 m-2 text-sm'>Post Comment</button>
+                    }
                   </div>
                   <div className='mt-3'>
                     
                     { !commentList ?
-                    <p>cannot fetch comments</p>
+                    <p className='text-red-600'>cannot fetch comments</p>
                     :
                     // ""
                     commentList.map((obj)=>(
-                      <Timeline key={obj.id}>
+                      <Timeline key={obj.id} className='mt-5'>
                         <TimelineItem className=''>
-                          <TimelineConnector/>
+                          <TimelineConnector color='blue' />
                           <TimelineHeader>
                             {/* <TimelineIcon/> */}
                             <TimelineIcon variant='filled' color='blue-gray' className=''>
@@ -207,13 +244,14 @@ const ReadPostPage = ({postArray}) => {
                               <Typography variant='h7' className='text-sm font-medium'>{obj.user.firstname} {obj.user.lastname}</Typography>
                               <Popover placement="bottom-end" className=''>
                                     <PopoverHandler>
-                                        <FontAwesomeIcon icon={faEllipsis}/>
+                                        <FontAwesomeIcon icon={faEllipsis} rotation={90}/>
                                     </PopoverHandler>
                                     <PopoverContent>
                                         <div className=' flex flex-col z-20 items-start space-y-3'>
                                             { userData.email === obj.user.email ? 
                                               <>
                                                 <button onClick={()=>handleEditComment(obj.id)}>Edit Comment</button>
+                                                
                                                 <button onClick={()=>handleDeleteComment(obj.id)}>Delete Comment</button>
                                               </>
                                               :
@@ -254,7 +292,7 @@ const ReadPostPage = ({postArray}) => {
       <div className='p-3'>
         {DisplayPost()}
       </div>
-      <div className='mt-2 p-2'>
+      <div className='mt-5 p-2'>
         <p className='text-gray-600'>Check related posts</p>
         <Posts postFetched={postFetched} />
       </div>

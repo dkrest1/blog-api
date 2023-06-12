@@ -17,6 +17,9 @@ import axios from 'axios';
 import { token } from './Components/redux/AccessTokenSlice';
 import { user } from './Components/redux/UserDataSlice';
 import { getUser } from './Components/redux/UserDataSlice';
+import { EditPost } from './Components/Dashboard/EditPost';
+import { ForgetPassword } from './Components/Auth/ForgetPassword';
+import { ResetPassword } from './Components/Auth/ResetPassword';
 
 
 
@@ -32,8 +35,9 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(initialState);
 
 
+
   return (
-    <div className="App flex flex-col min-h-screen">
+    <div className="App flex flex-col min-h-screen box-border">
       <BrowserRouter>
         <Navbar selectedFile={selectedFile}  />
         
@@ -47,6 +51,9 @@ function App() {
           {/* <Route path='/write' element={<WritePost accessToken={accessToken} />}/> */}
           {/* <Route path='/read-post-page/:id' element={<PostPage postArray={postArray} />}/> */}
           <Route path='/read-post-page/:id' element={<ReadPostPage postArray={postArray} />}/>
+          <Route path='/edit-post/:id' element={<EditPost/>}/>
+          <Route path ='forgot-password' element={<ForgetPassword/>}/>
+          <Route path='reset-password' element={<ResetPassword/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
