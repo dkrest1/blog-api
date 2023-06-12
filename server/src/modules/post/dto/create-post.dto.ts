@@ -13,9 +13,4 @@ export class CreatePostDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  published: boolean;
 }

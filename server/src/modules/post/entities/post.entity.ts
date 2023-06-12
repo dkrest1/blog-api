@@ -30,6 +30,9 @@ export class Post {
   })
   slug: string;
 
+  @Column({ nullable: true })
+  imageId: string;
+
   @Column('int', { default: 0 })
   likeCount: number;
 
