@@ -1,7 +1,7 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import * as path from 'path';
 import * as sharp from 'sharp';
-
+// was needed, just here just incase
 @Injectable()
 export class ImagePipe
   implements PipeTransform<Express.Multer.File, Promise<string>>

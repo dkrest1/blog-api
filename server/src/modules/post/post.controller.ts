@@ -11,6 +11,8 @@ import {
   ParseUUIDPipe,
   HttpStatus,
   Query,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -43,6 +45,7 @@ export class PostController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiBody({ type: [CreatePostDto] })
   @Post('create')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async create(
     @Body() createPostDto: CreatePostDto,
     @Request() req: any,

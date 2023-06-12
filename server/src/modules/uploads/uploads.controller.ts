@@ -1,73 +1,72 @@
 import {
-  BadRequestException,
   Controller,
   Delete,
   Get,
-  NotFoundException,
-  Param,
+  Query,
   UseGuards,
   Post,
-  Req,
-  Res,
   UploadedFile,
   UseInterceptors,
   Request,
   Response,
+  Patch,
 } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ImageUploadService } from './uploads.service';
+import { ImageService } from './uploads.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard.guard';
-import slugify from 'slugify';
-import * as fs from 'fs';
+import { INormalResponse } from '../common/interface/index.interface';
 
 @ApiTags('upload Image')
-@Controller('upload')
+@Controller('image')
 export class UploadsController {
-  constructor(private readonly imageUploadService: ImageUploadService) {}
+  constructor(private readonly imageService: ImageService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post('me/avatar')
-  @UseInterceptors(FileInterceptor('image'))
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: any,
   ): Promise<string | Error> {
-    // You can change the approach of getting the user id here
-    const { id } = req.user;
-    if (!id) throw new BadRequestException('Invalid UserID');
-    const folder = `avatars/${slugify(id)}/avatar`;
+    const imgId = req.user.id;
+    const imgDir = `avatars`;
     try {
-      const imagePath = await this.imageUploadService.uploadImage(file, folder);
+      const imagePath = await this.imageService.uploadImage(
+        imgId,
+        file,
+        imgDir,
+      );
       return imagePath;
     } catch (error) {
-      return new BadRequestException(error.message);
+      return error;
     }
   }
-  @Get('me/avatar')
-  async getImage(@Request() req, @Response() res): Promise<any> {
-    const { imagePath } = req.body;
-    await this.imageUploadService.getImage(
-      // to be able to view on browser too, an option for client-side
-      imagePath || req.query.imagePath,
-      res,
-    );
+
+  @Get('view')
+  async getImage(
+    @Query('folder') folder: string,
+    @Query('filename') filename: string,
+    @Response() res: any,
+  ): Promise<any> {
+    await this.imageService.getImage(folder, filename, res);
   }
 
-  @Delete('me/avatar')
-  async deleteImage(@Request() req, @Response() res): Promise<any> {
-    const { imagePath } = req.body;
-    await this.imageUploadService
-      .deleteImage(imagePath)
-      .then(() => {
-        return { message: 'Image deleted successfully' };
-      })
-      .catch((error) => {
-        if (error instanceof NotFoundException) {
-          throw new NotFoundException('Image not found');
-        }
-        console.log({ errorDeletingImage: error });
-        throw error;
-      });
+  @Patch()
+  @UseInterceptors(FileInterceptor('file'))
+  async updateImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('folder') folder: string,
+    @Query('filename') filename: string,
+  ): Promise<string> {
+    return await this.imageService.updateImage(file, folder, filename);
+  }
+
+  @Delete()
+  async deleteImage(
+    @Query('folder') folder: string,
+    @Query('filename') filename: string,
+  ): Promise<INormalResponse> {
+    return await this.imageService.deleteImage(folder, filename);
   }
 }
