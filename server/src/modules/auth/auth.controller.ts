@@ -33,7 +33,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @ApiBody({ type: [CreateUserDto] })
   @ApiResponse({
     status: 201,
