@@ -19,7 +19,7 @@ $ git clone https://github.com/dkrest1/My-Blog.git
 $ cd server
 ```
 
-## Create a `.env`file and put in the right credentials
+## Create a `.env` file and put in the right credentials
 
 ```
 $ cp .env.sample .env
