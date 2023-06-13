@@ -1,9 +1,6 @@
 {
   "name": "server",
   "version": "0.0.1",
-  "engines": {
-    "node": "16.17.1"
-  },
   "description": "blog api",
   "author": "oluwatosin akande",
   "private": true,
