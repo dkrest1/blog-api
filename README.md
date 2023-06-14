@@ -31,6 +31,6 @@ $ cp .env.sample .env
 $ npm install
 ```
 
-### View APIs
+### API Documentation
 
 - http://localhost:3000/api#/
