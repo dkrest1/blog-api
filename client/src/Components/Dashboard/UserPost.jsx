@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { selectAllPosts } from '../redux/PostsSlice'
-import { userDetails } from '../redux/UserSlice'
+// import { selectAllPosts } from '../redux/PostsSlice'
+// import { userDetails } from '../redux/UserSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import Posts from './Posts'
 import FloatingButton from './FloatingButton'
@@ -9,27 +9,21 @@ import { userPost } from '../redux/MyPostSlice'
 import { getMyPosts } from '../redux/MyPostSlice'
 
 const UserPost = ({accessToken}) => {
-    const userdetails = useSelector(userDetails)
-    // const postArray = useSelector(selectAllPosts)
     const myPost = useSelector(userPost)
     const dispatch = useDispatch()
-    const {fetchedPosts, isPending, setIsPending} = UseGet("http://localhost:3000/post/me", accessToken, 'myPost')
-
+    const {fetchedData, isPending, setIsPending} = UseGet("http://localhost:3000/post/me", accessToken,)
     useEffect(()=>{
-      dispatch(getMyPosts(fetchedPosts))
+      dispatch(getMyPosts(fetchedData))
       setIsPending(false)
-    },[fetchedPosts])
-    console.log(isPending)
-    console.log(myPost)
+    },[fetchedData])
 
   return (
     <div>
       {
-      //  userdetails.name === postArray.author &&
-        // <Posts postArray={postArray.filter((post)=>post.author===userdetails.name)} />
+        !myPost ?
+        <p className='text-base'>You have not written any post yet. Click the button below to start writing your stories</p>
+      :
         <Posts postFetched={myPost} isPending={isPending}  />
-        
-        
       }
       <div>
         <FloatingButton/>

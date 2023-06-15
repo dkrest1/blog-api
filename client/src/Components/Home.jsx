@@ -17,7 +17,7 @@ const Home =()=> {
     // console.log(userData)
     // console.log(accessToken)
   return (
-    <div className='flex flex-col min-h-screen' >
+    <div className='flex flex-col' >
         <div className=' flex flex-1 flex-col items-center bg-slate-50 h-80 p-1'>
             <section className='flex flex-1 flex-col items-center md:items-start bg-gray-8 my-3'>
                 <div className='md:flex md:flex-row md:justify-start md:items-end md:ml-24 md:gap-8'>

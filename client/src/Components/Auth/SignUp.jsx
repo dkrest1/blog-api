@@ -165,9 +165,9 @@ const SignUpForm = () => {
   }
  
   return (
-    <div>
+    <div className="h-full">
       {/* <BackButton/> */}
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="h-full bg-gray-100 flex items-center justify-center">
         <ToastContainer/>
           <div><Modal/></div>
         <div className="bg-white lg:w-1/3 md:w-1/2 sm:w-2/3 rounded-lg shadow-lg p-8 lg:my-4">

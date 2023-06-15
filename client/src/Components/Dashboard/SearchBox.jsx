@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { selectAllPosts } from '../redux/PostsSlice'
+// import { selectAllPosts } from '../redux/PostsSlice'
 import Posts from './Posts'
 
 const SearchBox = ({filtered}) => {

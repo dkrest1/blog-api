@@ -4,33 +4,30 @@ import {PencilSquareIcon, UserCircleIcon, BookmarkIcon,} from "@heroicons/react/
 import { RenderMeTab } from "./EditProfile";
 import { userDetails } from "../redux/UserSlice";
 import { useSelector } from "react-redux";
-import { selectAllPosts } from "../redux/PostsSlice";
+// import { selectAllPosts } from "../redux/PostsSlice";
 import Subscriber from "./Subscriber";
 import UserPost from "./UserPost";
 import Posts from "./Posts";
 import { useNavigate } from "react-router-dom";
-
-
+import { user } from "../redux/UserDataSlice";
 
 export default function Profiles({accessToken}) {
+  const userData = useSelector(user)
   const userdetails = useSelector(userDetails)
-  const postArray = useSelector(selectAllPosts)
+  // const postArray = useSelector(selectAllPosts)
   const navigateTo = useNavigate()
-  // console.log(postArray)
-
   useEffect(()=>{
     if(!accessToken){
       navigateTo('/login')
     }
    })
-
  
   const tabData = [
     {
       label: "My Posts",
       value: "my posts",
       icon: PencilSquareIcon,
-      desc: userdetails.role ==='subscriber' ? <Subscriber /> : 
+      desc: userData.role !=='subscriber' ? <Subscriber /> : 
       <UserPost accessToken={accessToken}
       />,
     },
@@ -49,7 +46,7 @@ export default function Profiles({accessToken}) {
   ];
    
   return (
-    <div className="">
+    <div className=" z-0">
       {
         !accessToken ? 
         <p>login</p>
