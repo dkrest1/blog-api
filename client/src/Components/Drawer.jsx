@@ -9,22 +9,39 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { NavLink, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { user } from "./redux/UserDataSlice";
-import { token } from "./redux/AccessTokenSlice";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
+import { getUser, user } from "./redux/UserDataSlice";
+import { getToken, token } from "./redux/AccessTokenSlice";
+import Cookies from "js-cookie";
+import { toast, ToastContainer } from "react-toastify";
+
 
 const ProfileDrawer =()=> {
   const accessToken = useSelector(token)
   const userData = useSelector(user)
+  const dispatch = useDispatch()
+  const navigateTo = useNavigate()
+  let status
+  const notify =()=> toast(status)
   const [open, setOpen] = useState(false);
   const openDrawer = () => setOpen(true);
   const closeDrawer = () => setOpen(false);
+  const onLogout=()=>{
+    Cookies.remove('token')
+    dispatch(getToken(null))
+    dispatch(getUser(null))
+    status='Successfully logged out!'
+    notify()
+    closeDrawer()
+    navigateTo('/login')
+  }
     return(
       <div className="">
+        <ToastContainer/>
         { !userData ?
         <FontAwesomeIcon 
-          icon={accessToken ? faBars : faUserCircle}
+          icon={!accessToken ? faBars : faUserCircle}
           onClick={openDrawer} 
           className='text-2xl text-white' 
           /> :
@@ -96,9 +113,14 @@ const ProfileDrawer =()=> {
                 <div className='flex flex-col pb-2'>
                     <div className='text-white text-center'>
                         {
-                          accessToken ? <button className="hover:text-white hover:font-semibold" >Log Out</button>
+                          accessToken ? 
+                            <button 
+                              onClick={onLogout}
+                              className="hover:text-white hover:font-semibold" >Log Out</button>
                           :
-                          <NavLink to='/login'>Login</NavLink>
+                          <button onClick={closeDrawer}>
+                            <NavLink to='/login'>Login</NavLink>
+                          </button>
                         }
                     </div>
                     <small className='text-center text-gray-400'>{userData && userData.firstname}</small>

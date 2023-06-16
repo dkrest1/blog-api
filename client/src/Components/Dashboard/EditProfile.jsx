@@ -10,10 +10,12 @@ import { token } from '../redux/AccessTokenSlice'
 import axios from 'axios'
 import {ToastContainer, toast} from 'react-toastify'
 import { getUser} from '../redux/UserDataSlice'
+import { userPost } from '../redux/MyPostSlice'
 
 export const RenderMeTab = ()=>{
     const userData = useSelector(user)
     const accessToken =useSelector(token)
+    const myposts = useSelector(userPost)
     const [updateData, setUpdateData] = useState(
       {
         email: '',
@@ -77,14 +79,16 @@ export const RenderMeTab = ()=>{
           <div className='flex flex-col mt-3 items-center md:-mb-3'>
             {userData && !userData.profilePicture ? 
               <p className='text-sm text-gray-500 md:text-lg'>
-                <span className='md:hidden'>Tap</span><span className='hidden md:inline'>Click </span> to upload Profile image</p> :<p className='text-sm text-gray-300 md:text-lg'><span className='md:hidden'>Tap </span> <span className='hidden md:inline'>Click </span>to change profile image
+                <span className='md:hidden'>Tap</span><span className='hidden md:inline'>Click </span> to upload Profile image</p> 
+                :
+                <p className='text-sm text-gray-300 md:text-lg'><span className='md:hidden'>Tap </span> <span className='hidden md:inline'>Click </span>to change profile image
               </p>
             }
             <ProfileAvatar/>
             <p className='text-lg -mb-2 text-gray-800 font-semibold mt-3 md:text-2xl'>{userData.firstname} {userData.lastname}</p>
-            <small className='text-xs text-gray-600 md:mt-2 md:text-sm'>{userData.email}</small>
+            <small className='text-xs text-gray-600 mt-1 md:mt-2 md:text-sm'>{userData.email}</small>
             <div>
-              {/* <p ><span className='font-medium text-sm'>{postFetched.filter((post)=>post.user.firstname===userData.firstname).length}</span> <span className='text-sm text-slate-600'> Posts</span></p> */}
+              <p ><span className='font-medium text-sm'>{myposts&& myposts.length}</span> <span className='text-sm text-slate-600'> Posts</span></p>
             </div>
           </div>
           <div className='pt-5 md:pt-11'>

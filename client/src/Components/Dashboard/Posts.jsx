@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faComment, faHeart, faEllipsis, } from '@fortawesome/free-solid-svg-icons';
 // import userAvatar from '../../Assets/Images/emma.jpg'
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAllPosts } from '../redux/PostsSlice';
+// import { selectAllPosts } from '../redux/PostsSlice';
 import {token} from '../redux/AccessTokenSlice'
 import axios from 'axios';
 import {toast, ToastContainer} from 'react-toastify'
@@ -16,6 +16,9 @@ import { user } from '../redux/UserDataSlice';
 import { getPosts } from '../redux/PostSlice';
 import UseGet from '../UseGet';
 import ReactLoading from 'react-loading'
+import emma from '../../Assets/Images/emma.jpg'
+import blogimg from '../../Assets/Images/blog2.png'
+import TimeAgo from '../TimeAgo';
  
 
 const Pagination =({totalPages, currentPage, setCurrentPage})=>{
@@ -82,12 +85,12 @@ const Posts = ({ postFetched, isPending}) => {
     else if(postFetched && postFetched.length < 30){
       objectsPerPage = 8
     }
-
+    // console.log(postFetched.length)
   const [currentPage, setCurrentPage] = useState(1);  
   const totalPages =postFetched && Math.ceil(postFetched.length / objectsPerPage);
   const startIndex = (currentPage - 1) * objectsPerPage;
   const endIndex = startIndex + objectsPerPage;
-  let currentObjects = postFetched && postFetched.slice(startIndex, endIndex); 
+  let currentObjects = postFetched && postFetched.slice(startIndex, endIndex) 
 
   const navigateTo = useNavigate()
   
@@ -133,13 +136,10 @@ const Posts = ({ postFetched, isPending}) => {
       console.log(error)
     })
   }
-  // console.log(fetchedPosts)
   const handleEditPost = (postId) =>{
     if(fetchedPosts){
       let data = fetchedPosts.find((obj)=>obj.id===postId)
-      // console.log(data)
       localStorage.setItem('editPost', JSON.stringify(data))
-      // console.log(localStorage.getItem('editPost'))
       navigateTo(`/edit-post/${postId}`)
   } else{
     status="Couldn't fetch post"
@@ -161,45 +161,44 @@ const Posts = ({ postFetched, isPending}) => {
                 <div key={object.id} className='flex flex-col pt-2 md:pt-4 w-full md:w-full'>
                     <div className='flex flex-col'>
                       <div className="flex justify-between w-full gap-2">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-2">
                             <Avatar
-                              size='sm'
+                              size='xs'
                               variant='circular'
-                              src={object.userAvatar} alt='user avatar'
+                              // src={object.userAvatar} alt='user avatar'
+                              src={emma} alt='user avatar'
                             />
                               <Typography variant="small" color="blue-gray" className='md:text-lg'>
                               {object.user.firstname} {object.user.lastname}
                               </Typography>
                           </div>
                           <div className=' items-center'>
-                            <Typography variant='small' color='blue-gray' className='text-[8px] md:text-lg'>
-                              {object.created_at}
+                            <Typography variant='small' color='blue-gray' className='text-sm md:text-lg'>
+                              <TimeAgo timestamp={object.created_at}/>
                             </Typography>
                           </div>
                       </div>
                       <CardBody className='-mt-5 -mb-2 z-0'>
                         <NavLink to={`/read-post-page/${object.id}`}>
-                          <div className='flex flex-row justify-between'>
+                          <div className='flex flex-row justify-between items-center'>
                             <div className=''>
                               <Typography variant='h5' color='blue-gray' className=''>
                                   {object.title}
                               </Typography>
                             </div>
-                            <img src={object.image} alt='card image' className=' w-auto h-auto md:w-30 md:h-40'/>
+                            {/* <img src={object.image} alt='card image' className=' w-auto h-auto md:w-30 md:h-40'/> */}
+                            <img src={blogimg} alt='card image' className=' w-14 h-14 md:w-30 md:h-40'/>
                           </div>
                           <div className='hidden md:flex md:flex-col md:-mt-32'>
                             <p>{object.content.substr(0, 200)}...</p>
                           </div>
                         </NavLink>
                       </CardBody>
-                      <CardFooter className='flex flex-row -mt-10 -mb-6 z-0 md:-mt-9 md:justify-between'>
-                          <Typography className="font-normal text-[10px] md:text-sm">
-                              {object.date}
-                          </Typography>
+                      {/* <CardFooter className='flex flex-row -mt-10 -mb-6 z-0 md:-mt-9 md:justify-between'>
                           <Typography variant='lead' className='bg-blue-gray-50 text-gray-500 text-xs px-2 py-1'>
                               {object.category}
                           </Typography>
-                      </CardFooter>
+                      </CardFooter> */}
                       <CardFooter className='-mb-3 z-0 '>
                           <div className='flex justify-between gap-2 text-xs -mt-6 md:-mt-3'>
                               <button onClick={()=>handleLikeButton(object.id, object.user.id)}>
@@ -216,8 +215,8 @@ const Posts = ({ postFetched, isPending}) => {
                                       <FontAwesomeIcon icon={faEllipsis}/>
                                   </PopoverHandler>
                                   <PopoverContent>
-                                      <div className=' flex flex-col z-20 items-start space-y-3'>
-                                          { userData.email === object.user.email ? 
+                                      <div className='flex flex-col z-10 items-start space-y-3'>
+                                          {userData && userData.email === object.user.email ? 
                                             <>
                                               <button onClick={()=>handleEditPost(object.id)}>Edit Story</button>
                                               <button onClick={()=>handleDeletePost(object.id)}>Delete Story</button>
@@ -240,9 +239,10 @@ const Posts = ({ postFetched, isPending}) => {
                 </div>
             ))}
         </div>
-        : <p>Error fetching posts</p>
+        : 
+        <p>Error fetching posts</p>
         }
-        <div className='md:mt-8'>
+        <div className='z-0 self-center md:mt-8 '>
           <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
         </div>
             

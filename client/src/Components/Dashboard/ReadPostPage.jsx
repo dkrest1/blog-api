@@ -1,6 +1,6 @@
 import React from 'react'
 import TopMenu from '../TopMenu'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Avatar, Popover, PopoverContent, PopoverHandler } from '@material-tailwind/react'
 import {Timeline,TimelineItem,TimelineConnector,TimelineHeader,TimelineIcon,TimelineBody,Typography,} from "@material-tailwind/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,21 +8,44 @@ import { faHeart, faBookmark, faComment, faEllipsis } from '@fortawesome/free-so
 import { useState } from 'react'
 import Posts from './Posts'
 import { useNavigate, useParams } from 'react-router-dom'
-import { post } from '../redux/PostSlice'
+import { getPosts, post } from '../redux/PostSlice'
 import { token } from '../redux/AccessTokenSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { user } from '../redux/UserDataSlice'
+import TimeAgo from '../TimeAgo';
+import {pending, getPending} from '../redux/PendingSlice'
+import ReactLoading from 'react-loading'
 
 const ReadPostPage = () => {
   const {id} = useParams() 
   const userData = useSelector(user)
   const postFetched = useSelector(post)
+  const isPending = useSelector(pending)
+  const [isLoading, setIsLoading]= useState(true)
   const accessToken = useSelector(token)
   let postId = (id)
-  let status ='successful'
+  let status =''
   const notify=()=> toast(status)
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+    if(!postFetched){
+      dispatch(getPending(true))
+      axios.get('http://localhost:3000/post')
+      .then((response)=>{
+      dispatch(getPosts(response.data))
+      dispatch(getPending(false))
+    })
+    .catch((error)=>{
+      console.log(error)
+      status="Couldn't fetch post"
+      dispatch(getPending(false))
+      notify()
+    })
+    }
+  },[postFetched])
 
   const [likeState, setLikeState] = useState(false)
   const [bookmarkState, setBookmarkState] = useState(false)
@@ -48,6 +71,7 @@ const ReadPostPage = () => {
   }
   const handleCommentClick =()=>{
     setEditComment(null)
+    setComments({comment:''})
     setError("")
     setShowComment(!showComment)
   }
@@ -61,22 +85,25 @@ const ReadPostPage = () => {
     if(!accessToken){
       navigateTo('/login')
     }
-  })
+  },[accessToken])
   //fetches all the comments
   useEffect(()=>{
-    axios.get(`http://localhost:3000/comment`, {headers})
+    setIsLoading(true)
+    axios.get(`http://localhost:3000/comment?limit=0`, {headers})
     .then(function(response){
       let data = response.data
       const filteredComment = data.filter((value)=>value.post.id === postId  
-    )
+    ).sort((a,b)=>b.created_at.localeCompare(a.created_at))
       setCommentList(filteredComment)
+      setIsLoading(false)
     })
     .catch(function(error){
       console.log(error)
       status="couldn't fetch comments"
+      setIsLoading(false)
       notify()
     })
-  },)
+  },[showComment])
 
   const handleSubmitComment =(event)=>{
     event.preventDefault()
@@ -87,8 +114,9 @@ const ReadPostPage = () => {
     else if(!editComment){
     axios.post(`http://localhost:3000/comment/create/${postId}`,comments, {headers})
     .then(function(response){
-      if(response.statusText==='OK'){
+      if(response.statusText==='Created'){
         status= 'Comment successful'
+        setComments({comment:''})
         notify()
         setShowComment(!showComment)
     }
@@ -102,8 +130,11 @@ const ReadPostPage = () => {
     axios.patch(`http://localhost:3000/comment/patch/${postId}`)
     .then(function(response){
       if(response.statusText==='OK'){
+        setEditComment(null)
+        setComments({comment:''})
         status="Comment updated successfully"
         notify()
+        setShowComment(false)
       }
     })
     .catch(function(error){
@@ -113,11 +144,9 @@ const ReadPostPage = () => {
     })
   }
   }
-
   const handleDeleteComment=(commentId)=>{
     axios.delete(`http://localhost:3000/comment/${commentId}`, {headers})
     .then(function(response){
-      console.log(response)
       if(response.statusText==='OK'){
         setCommentList(commentList.filter((comment)=>comment.id !==commentId))
         status ='Comment deleted successfully'
@@ -125,7 +154,6 @@ const ReadPostPage = () => {
       }
     })
   }
-
   useEffect(()=>{
     if (editComment){
       setComments({comment:editComment.comment})
@@ -134,23 +162,18 @@ const ReadPostPage = () => {
     }
   },[setComments, editComment])
 
-
   const handleEditComment=(commentId)=>{
-    // console.log(commentId)
     setCommentID(commentId)
     setShowComment(true)
     setEditComment(commentList.find((comment)=>comment.id===commentId))
-    // return getComment
   }
   const handleUpdateComment = ()=>{
-    // console.log(commentID)
     if(!comments.comment){
       setError('Comment cannot be empty!')
       return
     } else{
     axios.patch(`http://localhost:3000/comment/${commentID}`, comments, {headers})
     .then(function(response){
-      console.log(response)
       if(response.statusText==='OK'){
         setShowComment(false)
         setCommentID(null)
@@ -163,26 +186,35 @@ const ReadPostPage = () => {
     })
   }
   }
-  
-  // console.log(typeof(commentList))
  
   const DisplayPost =()=>{
     
     return(
       <div className=''>
         <ToastContainer/>
+        { isPending ? 
+          <div>
+            <ReactLoading type='spin' color='blue' height={50} width={50}/>
+          </div>
+          :
+          <>
         {postFetched ?
         <>
         {
           postFetched.map((value)=>{
             if(value.id === postId){
               return(
-                <div key={value.id} className='flex flex-col '>
-                  <h2 className='font-semibold text-2xl md:text-4xl'>{value.title}</h2>
-                  <p><Avatar src={value.userAvatar} size='xs'/>
-                    <span className='text-xs ml-1'>{value.user.firstname} {value.user.lastname}</span></p>
-                  <div className='flex flex-col items-center'>
-                  <img src={value.image} className=' w-40'/>
+                <div key={value.id} className='flex flex-col mt-4 '>
+                  <div className='flex flex-row gap-2'>
+                    <Avatar src={value.userAvatar} size='sm'/>
+                    <div className='flex flex-col'>
+                      <p className='text-sm ml-1'>{value.user.firstname} {value.user.lastname}</p>
+                      <p className='text-xs text-gray-500'><TimeAgo timestamp={value.created_at}/></p>
+                    </div>
+                  </div>
+                  <div className='flex flex-col items-center mt-4'>
+                    <h2 className='font-semibold text-2xl md:text-4xl'>{value.title}</h2>
+                    <img src={value.image} className=' w-40'/>
                   </div>
                   <p className='px-2'>{value.content}</p>
                   <small className='text-xs text-gray-600'>{value.date}</small>
@@ -224,11 +256,15 @@ const ReadPostPage = () => {
                     }
                   </div>
                   <div className='mt-3'>
-                    
+                    {isLoading ?
+                      <div className='flex justify-center'>
+                        <ReactLoading type='spin' color='gray' height={20} width={20}/>
+                      </div>
+                      :
+                    <>
                     { !commentList ?
                     <p className='text-red-600'>cannot fetch comments</p>
-                    :
-                    // ""
+                      :
                     commentList.map((obj)=>(
                       <Timeline key={obj.id} className='mt-5'>
                         <TimelineItem className=''>
@@ -241,7 +277,7 @@ const ReadPostPage = () => {
                               {/* <p className='text-xs text-gray-800'>{obj.user.firstname} {obj.user.lastname}</p> */}
                             </TimelineIcon>
                             <div className='flex flex-row justify-between w-full'>
-                              <Typography variant='h7' className='text-sm font-medium'>{obj.user.firstname} {obj.user.lastname}</Typography>
+                              <Typography variant='h6' className='text-sm font-medium'>{obj.user.firstname} {obj.user.lastname}</Typography>
                               <Popover placement="bottom-end" className=''>
                                     <PopoverHandler>
                                         <FontAwesomeIcon icon={faEllipsis} rotation={90}/>
@@ -273,6 +309,8 @@ const ReadPostPage = () => {
                       </Timeline>
                       ))
                     }
+                    </>
+                    }
                   </div>
                 </div>
               )
@@ -283,6 +321,7 @@ const ReadPostPage = () => {
         :
         <p>Encountered a problem fetching post</p>
       }
+      </>}
       </div>
     )
   }

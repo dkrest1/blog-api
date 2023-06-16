@@ -8,29 +8,31 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Typography } from "@material-tailwind/react";
-import { userDetails } from "../redux/UserSlice";
+// import { userDetails } from "../redux/UserSlice";
 import Subscriber from "./Subscriber";
-import { selectAllPosts } from "../redux/PostsSlice";
+// import { selectAllPosts } from "../redux/PostsSlice";
 import Posts from "./Posts";
 import { PhotoIcon, } from "@heroicons/react/24/outline";
-import { addPost } from "../redux/PostsSlice";
+// import { addPost } from "../redux/PostsSlice";
 import axios from "axios";
 import { nanoid } from "@reduxjs/toolkit";
 import { post } from "../redux/PostSlice";
+import { user } from "../redux/UserDataSlice";
 
 function WritingPage({accessToken}) {
   // const userPost = useSelector(allUserPosts)
+  const userData = useSelector(user)
   const fetchedPost = useSelector(post)
   // console.log(postFetched)
   const dispatch = useDispatch()
-  const userdetails = useSelector(userDetails)
-  const postArray= useSelector(selectAllPosts)
+  // const userdetails = useSelector(userDetails)
+  // const postArray= useSelector(selectAllPosts)
     const navigateTo = useNavigate();
     const [postValues, setPostValues] = useState({
-      id: nanoid(),
+      // id: nanoid(),
       title: '',
       content: '',
-      published: false
+      // published: false
     })
 
     const handleInputChange =(event)=>{
@@ -51,10 +53,11 @@ function WritingPage({accessToken}) {
       } 
       axios.post("http://localhost:3000/post/create", postValues, {headers})
       .then((response)=>{
-        console.log(response)
+        // console.log(response)
         if(response.status===201){
           notify()
           setPostValues({title:'', content:''})
+          // navigateTo('/dashboard')
         }
       })
       .catch((err)=>console.log(err))
@@ -92,7 +95,7 @@ function WritingPage({accessToken}) {
   return (
     <div className="flex flex-col h-screen">
       
-      { userdetails.role ==='subscriber' ? 
+      {userData && userData.role !=='subscriber' ? 
         <Subscriber/>
       :
       <div className="flex-1 overflow-y-auto px-2">
@@ -102,14 +105,16 @@ function WritingPage({accessToken}) {
               Write a new post
             </h2>
             <ToastContainer/>
-            <button
-              onClick={onPublishPost} 
-              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              {/* <PlusIcon className="w-5 h-5 mr-2" /> */}
-              <FontAwesomeIcon icon={faPlus} className="px-1" />
-              Publish
-            </button>
-          </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={onPublishPost} 
+                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {/* <PlusIcon className="w-5 h-5 mr-2" /> */}
+                <FontAwesomeIcon icon={faPlus} className="px-1" />
+                Publish
+              </button>
+            </div>
           <div className="shadow sm:rounded-md sm:overflow-hidden">
             <div className="px-4 py-5 bg-white sm:p-6">
               <div className="mb-4">
@@ -132,7 +137,7 @@ function WritingPage({accessToken}) {
                   htmlFor="body"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Body
+                  Content
                 </label>
                 <div>
                   <textarea className="w-full h-32 border-b-2"
@@ -161,12 +166,10 @@ function WritingPage({accessToken}) {
             </div>
           </div>
         </div>
-        <div>
+        {/* <div>
           <Typography variant='h5'>Check Recent Posts</Typography>
-        {/* <UserPost postArray={postArray} /> */}
-        {/* <Posts postArray={postArray.filter((post)=>post.author===userdetails.name)}/> */}
         <Posts postFetched={fetchedPost} isPending={false} />
-        </div>
+        </div> */}
       </div>
 }
     </div>

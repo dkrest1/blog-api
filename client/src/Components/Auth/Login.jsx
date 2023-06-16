@@ -9,27 +9,18 @@ import { user } from '../redux/UserDataSlice';
 import { getUser } from '../redux/UserDataSlice';
 import Cookies from 'js-cookie'
 import { useEffect } from 'react';
+import {getPending, pending} from '../redux/PendingSlice'
 
 export const Login = () => {
-  const userdata = useSelector(user)
+  const userData = useSelector(user)
   const accessToken = useSelector(token)
-  const [atoken, setToken] = useState(null)
-  const [userData, setUserData] = useState(null)
-  const [isPending, setIsPending] = useState(false)
+  const isPending= useSelector(pending)
   const dispatch = useDispatch()
-  useEffect(()=>{
-    dispatch(getToken(Cookies.get('token')))
-  }, [atoken])
-  useEffect(()=>{
-    dispatch(getUser(userData))
-  })
-  // console.log(atoken)
-  // console.log(accessToken)
+  
   const [formValues, setFormValues] = useState({
     email: "",
     password: ""
   });
-  
   const navigateTo = useNavigate()
   let status
   const notify =()=> toast(status)
@@ -37,56 +28,57 @@ export const Login = () => {
     const { name, value } = event.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
-
   const handleLoginSubmit =(event)=>{
     event.preventDefault()
-    setIsPending(true)
+    dispatch(getPending(true))
     axios.post("http://localhost:3000/auth/login", formValues)
     .then(function (response){
-      console.log(response)
       if (response.statusText === 'Created'){
         let data = response.data.access_token
+        dispatch(getToken(data))
         setToken(data)
-        // localStorage.setItem('token', data)
-        Cookies.set('token', data, {expires: 7})
-        // userdata()
+        Cookies.set('token', data, {expires: 1})
         const headers = {
           Authorization: `Bearer ${data}`
         }
         axios.get('http://localhost:3000/user/me', {headers})
         .then(function(response){
-          let data = response.data
-          setUserData(data)
-          setIsPending(false)
-          console.log(response.data)
-          status="Login Successful!"
-          notify()
+          if(response.statusText==='OK'){
+            let data = response.data
+            dispatch(getUser(data))
+            status="Login Successful!"
+            notify()
+            setTimeout(() => {
+              navigateTo('/')
+            }, 2000);
+            dispatch(getPending(false))
+          }
         })
         .catch(function(error){
           console.log(error)
           status = error.response.data.message
+          status= 'Something went wrong!'
           notify()
+          dispatch(getPending(false))
         })
-        setTimeout(() => {
-          navigateTo('/')
-        }, 2000);
-        setIsPending(false)
       }
     })
     .catch(function (error){
-      console.log(error)
-      setIsPending(false)
+      // console.log(error)
+      status=error.response.data.message
+      notify()
+      dispatch(getPending(false))
+      // setIsPending(false)
     })
   }
-  // console.log(accessToken)
   const handleForgotPassword =(event)=>{
     event.preventDefault()
     navigateTo('/forgot-password')
   }
-
+// console.log(userData)
   return (
-    <div>
-      <div className="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+    <div className='h-full'>
+      <div className="h-full bg-gray-100 bg-opacity-100 flex justify-center items-center">
             <div className="bg-white p-8 rounded-lg md:p-14">
               <ToastContainer/>
               <h2 className="text-2xl font-bold mb-4 text-center font-mono md:text-3xl">Login</h2>

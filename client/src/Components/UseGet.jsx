@@ -3,7 +3,7 @@ import axios from 'axios'
 import React, { useEffect, useState} from 'react'
 
 const UseGet = (url, token) => {
-    const [fetchedPosts, setFetchedPosts] = useState(null)
+    const [fetchedData, setFetchedData] = useState(null)
     const [isPending, setIsPending] = useState(true)
  useEffect(()=>{
     const headers = {
@@ -11,10 +11,10 @@ const UseGet = (url, token) => {
     }
     axios.get(url, {headers})
     .then((response)=>{
+      // console.log(response.data)
       if(response.statusText==='OK'){
-        console.log(response.data)
         let data = response.data
-        setFetchedPosts(data)
+        setFetchedData(data.sort((a, b)=>b.created_at.localeCompare(a.created_at)))
       }
     })
     .catch((error)=>{
@@ -23,7 +23,7 @@ const UseGet = (url, token) => {
     })
  },[url])
 
- return {fetchedPosts, isPending, setIsPending}
+ return {fetchedData, isPending, setIsPending}
 
 }
 
