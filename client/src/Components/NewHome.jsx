@@ -8,7 +8,7 @@ const NewHome = () => {
   return (
     <div>
       <section className="w-full bg-[url('https://www.nicepng.com/png/detail/260-2608673_blue-background-png-blue-abstract-png-transparent.png')] bg-no-repeat bg-cover h-screen flex flex-row justify-betwee justif-center b-blue-900 border-t p-3 px-6">
-        <div className="flex flex-col gap-y-10 mt-8 lg:mt-10">
+        <div className="flex flex-col gap-y-10 mt-2 lg:mt-10">
           <div className="flex flex-col gap-y-3 lg:gap-y-6 font-bold text-blue-900 text-4xl lg:text-6xl font-heading-1 tracking-wider mt-8">
             <h1 className="">Top</h1>
             <h1>Trending Stories</h1>
@@ -36,7 +36,7 @@ const NewHome = () => {
         <h3 className="text-xl md:text-3xl font-medium text-blue-900 font-heading-1">
           Diversity
         </h3>
-        <p className="text-gray-60 text-blue-900 opacity-80 mb-2 mt-1 md:text-xl md:px-5 tracking-wider">
+        <p className="text-center text-blue-900 opacity-80 mb-2 mt-1 md:text-xl md:px-5 tracking-wider">
           Discover a diverse array of topics in our blog. Dive into the
           fascinating world of science and technology, where we explore
           groundbreaking innovations and discuss their impact on society.
