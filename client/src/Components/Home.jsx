@@ -17,15 +17,15 @@ const Home =()=> {
     // console.log(userData)
     // console.log(accessToken)
   return (
-    <div className='flex flex-col' >
-        <div className=' flex flex-1 flex-col items-center bg-slate-50 h-80 p-1'>
-            <section className='flex flex-1 flex-col items-center md:items-start bg-gray-8 my-3'>
-                <div className='md:flex md:flex-row md:justify-start md:items-end md:ml-24 md:gap-8'>
-                    <img className=' h-40 w-auto md:h-64 ' src={blog} alt='blog image'/>
+    <div className='flex flex-col -mt-3 w-full' >
+        <div className=' flex flex-1 flex-col items-center bg-slate-50 h-80 p-0'>
+            <section className='flex w-full flex-1 flex-col sm:items-center md:items-start bg-gray-8 my-3'>
+                <div className='hidden w-full bg-gradient-to-r from-red-500 to-indigo-500 md:flex md:flex-row md:justify-start md:items-end md:gap-8 md:py-3'>
+                    <img className=' h-40 w-auto md:h-64  ' src={blog} alt='blog image'/>
                     <p className='hidden md:inline-flex md:self-end md:text-6xl md:font-bold md:text-blue-800 md:tracking-[.25em]'>MY BLOG</p>
                 </div>
-                <div className='flex flex-col items-center md:mt-10 '>
-                    <div className=' text-center  font-serif mt-5 mb-5 mx-10 md:text-xl md:ml-2'><p className=' text-center md:text-start -mb-8 text-base  text-gray-800 md:text-3xl'>You want</p> <br/><span className='text-4xl md:text-6xl font-extrabold text-gray-900 md:text-blue-900'>lastest and Top Trending Stories</span><span className='text-xl md:text-3xl text-gray-800'> in and outside the tech space?</span>
+                <div className="flex flex-col md:mt-10">
+                    <div className='  font-serif mt-5 mb-5 mx-10 md:text-xl md:ml-2'><p className='  md:text-start -mb-8 text-base  text-gray-800 md:text-3xl'>You want</p> <br/><span className='font-heading-1 text-4xl md:text-6xl font-extrabold text-gray-900 md:text-blue-900'>lastest and Top Trending Stories</span><span className='text-xl md:text-3xl text-gray-800'> in and outside the tech space?</span>
                     </div>
                     {!accessToken ?
                         <div className='flex flex-col items-center md:rounded md:px-8 md:py-6 md:border md:border-blue-100 md:mt-4'> 
@@ -39,7 +39,7 @@ const Home =()=> {
                         </div>
                     :
                     <>
-                        <div className='flex flex-col items-center bg-gray-50 mx-7 p-4 border2 rounded-lg md:mt-8 md:gap-3'>
+                        <div className='flex flex-col items-center bg-gray-50 mx-7 p-4 border2 rounded-lg md:mt-16 md:gap-3'>
                             <h3 className='text-xl md:text-3xl font-medium text-blue-900'>Diversity</h3>
                             <p className='text-gray-600 mb-2 mt-1 md:text-xl md:px-5'>
                         Discover a diverse array of topics in our blog. Dive into the fascinating world of science and technology, where we explore groundbreaking innovations and discuss their impact on society.

@@ -3,7 +3,7 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import ProfileAvatar from './ProfilePic'
-import { Button } from '@material-tailwind/react'
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader } from '@material-tailwind/react'
 import { user } from '../redux/UserDataSlice'
 import { post } from '../redux/PostSlice'
 import { token } from '../redux/AccessTokenSlice'
@@ -11,11 +11,16 @@ import axios from 'axios'
 import {ToastContainer, toast} from 'react-toastify'
 import { getUser} from '../redux/UserDataSlice'
 import { userPost } from '../redux/MyPostSlice'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const RenderMeTab = ()=>{
     const userData = useSelector(user)
     const accessToken =useSelector(token)
     const myposts = useSelector(userPost)
+    const navigateTo = useNavigate
+    const [open, setOpen]= useState(false)
+    const[openDelete, setOpenDelete] =useState(false)
+    const [deleteStatus, setDeleteStatus] = useState('')
     const [updateData, setUpdateData] = useState(
       {
         email: '',
@@ -70,6 +75,24 @@ export const RenderMeTab = ()=>{
         status = "Something happened, couldn't update!"
         notify()
       })
+    }
+    const handleDeleteAccount=()=>{
+      const headers ={
+        Authorization: `Bearer ${accessToken}`
+      }
+      axios.delete('http://localhost:3000/user/me', {headers})
+      .then((response)=>{
+        console.log(response)
+        setOpen(false)
+        setDeleteStatus(response.data)
+        setOpenDelete(true)
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+    }
+    const logOut=()=>{
+      navigateTo('/login')
     }
 
     return(
@@ -156,11 +179,38 @@ export const RenderMeTab = ()=>{
             }
           </div>
           <div className='flex flex-col mt-3 gap-4 pt-3'>
+            <Dialog open={open} handler={()=>setOpen(!open)} size='xl'>
+                  <DialogHeader >Delete Account</DialogHeader>
+                  <DialogBody className='text-center'>
+                      Your Account will be deleted and will no longer exist. Are you sure you want to continue?
+                  </DialogBody>
+                  <DialogFooter className='flex flex-row justify-around'>
+                      <Button variant="gradient" color="red" onClick={()=>setOpen(false)} className=''>
+                          NO
+                      </Button>
+                      <Button variant="gradient" color="blue" onClick={handleDeleteAccount} className=''>
+                          YES
+                      </Button>
+                  </DialogFooter>
+              </Dialog>
+              <Dialog open={openDelete} handler={()=>setOpenDelete(!openDelete)} size='xl'>
+                  <DialogHeader >Delete Account</DialogHeader>
+                  <DialogBody className='text-center'>
+                      {deleteStatus}
+                  </DialogBody>
+                  <DialogFooter className='flex flex-row justify-around'>
+                    <Link to='/login'>
+                      <Button variant="gradient" color="blue" className=''>
+                          OK
+                      </Button>
+                    </Link>
+                  </DialogFooter>
+              </Dialog>
             {/* <button className='flex flex-col items-start'>
                 <p className='text-base text-red-700 md:text-xl'>Deactivate Account</p>
                 <p className='text-xs text-start md:text-sm'>Deactivating Account will suspend your account until you sign back in</p>
             </button> */}
-            <button className='flex flex-col items-start'>
+            <button className='flex flex-col items-start' onClick={()=>setOpen(!open)}>
                 <p className='text-base text-red-700 md:text-xl'>Delete Account</p>
                 <p className='text-xs text-start md:text-sm'>Permanetly delete your account and all your published contents</p>
             </button>

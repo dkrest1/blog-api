@@ -156,7 +156,7 @@ const Posts = ({ postFetched, isPending}) => {
         { isPending ?
           <ReactLoading type='spin' color='blue' height={50} width={50} className='self-center' />
         :postFetched ?
-        <div className='flex flex-col divide-y divide-gray-300 md:w-full mx-2 md:gap-8 items-center '>
+        <div className='flex flex-col divide-y divide-gray-200 md:w-full mx-2 md:gap-8 items-center '>
             {currentObjects.map((object)=>(
                 <div key={object.id} className='flex flex-col pt-2 md:pt-4 w-full md:w-full'>
                     <div className='flex flex-col'>
@@ -172,7 +172,7 @@ const Posts = ({ postFetched, isPending}) => {
                               {object.user.firstname} {object.user.lastname}
                               </Typography>
                           </div>
-                          <div className=' items-center'>
+                          <div className='md:mr-5 items-center'>
                             <Typography variant='small' color='blue-gray' className='text-sm md:text-lg'>
                               <TimeAgo timestamp={object.created_at}/>
                             </Typography>
@@ -181,17 +181,18 @@ const Posts = ({ postFetched, isPending}) => {
                       <CardBody className='-mt-5 -mb-2 z-0'>
                         <NavLink to={`/read-post-page/${object.id}`}>
                           <div className='flex flex-row justify-between items-center'>
-                            <div className=''>
+                            <div className='md:-mt-'>
                               <Typography variant='h5' color='blue-gray' className=''>
                                   {object.title}
                               </Typography>
+                              <div className='hidden md:flex md:flex-col md:-mt-'>
+                                <p>{object.content.substr(0, 200)}...</p>
+                              </div>
                             </div>
                             {/* <img src={object.image} alt='card image' className=' w-auto h-auto md:w-30 md:h-40'/> */}
-                            <img src={blogimg} alt='card image' className=' w-14 h-14 md:w-30 md:h-40'/>
+                            <img src={blogimg} alt='card image' className=' w-14 h-14 md:w-40 md:h-40'/>
                           </div>
-                          <div className='hidden md:flex md:flex-col md:-mt-32'>
-                            <p>{object.content.substr(0, 200)}...</p>
-                          </div>
+                          
                         </NavLink>
                       </CardBody>
                       {/* <CardFooter className='flex flex-row -mt-10 -mb-6 z-0 md:-mt-9 md:justify-between'>
@@ -199,7 +200,7 @@ const Posts = ({ postFetched, isPending}) => {
                               {object.category}
                           </Typography>
                       </CardFooter> */}
-                      <CardFooter className='-mb-3 z-0 '>
+                      <CardFooter className='-mb-5 sm:-mb-10 z-0 '>
                           <div className='flex justify-between gap-2 text-xs -mt-6 md:-mt-3'>
                               <button onClick={()=>handleLikeButton(object.id, object.user.id)}>
                                   <FontAwesomeIcon icon={faHeart} className={``}/> <span>{object.likeCount}</span>
@@ -212,10 +213,10 @@ const Posts = ({ postFetched, isPending}) => {
                               </button>
                               <Popover placement="bottom-end" className=''>
                                   <PopoverHandler>
-                                      <FontAwesomeIcon icon={faEllipsis}/>
+                                      <FontAwesomeIcon icon={faEllipsis} className='md:text-2xl'/>
                                   </PopoverHandler>
-                                  <PopoverContent>
-                                      <div className='flex flex-col z-10 items-start space-y-3'>
+                                  <PopoverContent clas>
+                                      <div className='flex flex-col z-10 items-start space-y-3 md:w-36 md:text-lg md:items-center'>
                                           {userData && userData.email === object.user.email ? 
                                             <>
                                               <button onClick={()=>handleEditPost(object.id)}>Edit Story</button>
@@ -232,7 +233,6 @@ const Posts = ({ postFetched, isPending}) => {
                                   </PopoverContent>
                               </Popover>
                           </div>
-                          
                       </CardFooter>
                     </div>
                     {/* </Card> */}

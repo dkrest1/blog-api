@@ -19,6 +19,9 @@ import { ForgetPassword } from './Components/Auth/ForgetPassword';
 import { ResetPassword } from './Components/Auth/ResetPassword';
 import ReactLoading from 'react-loading'
 import { pending, getPending } from './Components/redux/PendingSlice';
+import Cookies from 'js-cookie';
+import NewHome from './Components/newHome';
+import NotFound from './Components/NotFound';
 
 function App() {
   const accessToken = useSelector(token)
@@ -44,31 +47,58 @@ function App() {
       })
     }
   },[userData])
+  useEffect(()=>{
+    if(!userData && accessToken){
+      Cookies.remove('token')
+    }
+  })
 
   return (
     <div className="App flex flex-col h-screen box-border">
       <BrowserRouter>
-        <Navbar/>
-        {
-          isPending ? 
-          <div className='absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2'>
-            <ReactLoading type='spin' color='blue' height={50} width={50} className=''/>
+        <Navbar />
+        {isPending ? (
+          <div className="absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2">
+            <ReactLoading
+              type="spin"
+              color="blue"
+              height={50}
+              width={50}
+              className=""
+            />
           </div>
-        :
-        <Routes>
-          <Route exact path="/" element={<Home />}/>
-          <Route path='/login' element={<Login />}/>
-          <Route path='/sign-up' element={<SignUpForm/>}/>
-          <Route path='/dashboard' element={<Dashboard accessToken={accessToken}/>}/>
-          <Route path='/profile' element={<Profiles setSelectedFile={setSelectedFile} selectedFile={selectedFile} accessToken={accessToken}/>}/>
-          <Route path='/write' element={<WritingPage accessToken={accessToken} />}/>
-          <Route path='/read-post-page/:id' element={<ReadPostPage />}/>
-          <Route path='/edit-post/:id' element={<EditPost/>}/>
-          <Route path ='forgot-password' element={<ForgetPassword/>}/>
-          <Route path='reset-password' element={<ResetPassword/>}/>
-        </Routes>
-        } 
-        <Footer/>
+        ) : (
+          <Routes>
+            <Route exact path="/" element={<NewHome />} />
+            {/* <Route exact path="/old" element={<Home />} /> */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/sign-up" element={<SignUpForm />} />
+            <Route
+              path="/dashboard"
+              element={<Dashboard accessToken={accessToken} />}
+            />
+            <Route
+              path="/profile"
+              element={
+                <Profiles
+                  setSelectedFile={setSelectedFile}
+                  selectedFile={selectedFile}
+                  accessToken={accessToken}
+                />
+              }
+            />
+            <Route
+              path="/write"
+              element={<WritingPage accessToken={accessToken} />}
+            />
+            <Route path="/read-post-page/:id" element={<ReadPostPage />} />
+            <Route path="/edit-post/:id" element={<EditPost />} />
+            <Route path="forgot-password" element={<ForgetPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path='*' element={<NotFound/>}/>
+          </Routes>
+        )}
+        <Footer />
       </BrowserRouter>
     </div>
   );

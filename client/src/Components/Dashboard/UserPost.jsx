@@ -20,7 +20,7 @@ const UserPost = ({accessToken}) => {
   return (
     <div>
       {
-        !myPost ?
+        myPost && myPost.length<1 ?
         <p className='text-base'>You have not written any post yet. Click the button below to start writing your stories</p>
       :
         <Posts postFetched={myPost} isPending={isPending}  />
