@@ -27,7 +27,7 @@ export default function Profiles({accessToken}) {
       label: "My Posts",
       value: "my posts",
       icon: PencilSquareIcon,
-      desc: userData.role !=='subscriber' ? <Subscriber /> : 
+      desc: userData && userData.role !=='subscriber' ? <Subscriber /> : 
       <UserPost accessToken={accessToken}
       />,
     },

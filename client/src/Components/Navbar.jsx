@@ -13,7 +13,7 @@ import { user } from './redux/UserDataSlice'
 
 
  
- const Navbar =(selectedFile)=> {
+ const Navbar =()=> {
     
     const userData = useSelector(user)
     const accessToken = useSelector(token)
@@ -46,7 +46,7 @@ import { user } from './redux/UserDataSlice'
                         </button>
                         }
                     </div>
-                    <div className={`${accessToken ? ' flex-1 flex items-center justify-center sm:items-stretch sm:justify-between ' : 'justify-start '}`}>
+                    <div className={`flex-1 flex items-center justify-start sm:justify-between items-stretch sm:${accessToken ? 'flex-1 flex items-center justify-center sm:justify-center sm:items-stretch sm:justify-between' : 'sm:justify-between'}`}>
                         <div className={`flex-shrink-0 flex items-center`}>
                             <Link to='/' className='' >
                                 <span className=' text-white text-lg md:text-2xl md:font-bold'>&lt;/&gt;</span>
@@ -58,8 +58,8 @@ import { user } from './redux/UserDataSlice'
                             </Link>
                         </div>
                         {/* Menu for larger screens */}
-                        <div className="hidden sm:block sm:ml-6  ">
-                            <div className="flex space-x-4 md:items-center ">
+                        <div className={`hidden sm:block sm:ml-6 `}>
+                            <div className={`flex space-x-4 md:items-center`}>
                                 <NavLink to ="/"
                                 className={({isActive, isPending})=> isActive ? " bg-blue-600 text-white font-bold text-lg p-2 rounded":"" ?isPending: "text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium md:text-lg"} 
                                 >
