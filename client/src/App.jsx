@@ -20,8 +20,8 @@ import { ResetPassword } from './Components/Auth/ResetPassword';
 import ReactLoading from 'react-loading'
 import { pending, getPending } from './Components/redux/PendingSlice';
 import Cookies from 'js-cookie';
-import NewHome from './Components/newHome';
 import NotFound from './Components/NotFound';
+import NewHome from './Components/NewHome';
 
 function App() {
   const accessToken = useSelector(token)
